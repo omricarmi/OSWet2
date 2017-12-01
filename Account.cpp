@@ -26,8 +26,6 @@ void Account::setBalance(int balance) {
     leaveWrite();
 }
 
-
-
 bool Account::isVIP(){
     enterRead();
     bool isVIP = mIsVIP;
