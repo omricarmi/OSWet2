@@ -9,7 +9,7 @@
 #include "Account.h"
 
 typedef struct _BankThreadData{
-    Bank* pBank;
+    Account* pBankAccount;
 } BankThreadData;
 
 void* bankThreadWrapper(void* bankThreadData);

@@ -12,6 +12,9 @@ using namespace std;
 
 #define IS_DEBUG 1
 
+/** Predfined Messages **/
+const string FAILED_RUN_ATTEMPT = "illegal arguments\n";
+
 void logd(string msg){
     if(IS_DEBUG) {
         std::cout << "debug: " << msg << endl;

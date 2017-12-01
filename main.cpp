@@ -17,13 +17,15 @@ using namespace std;
 /***** GLOBALS *****/
 //list of bank accounts
 std::map<int,Account> accounts;
-Bank bank;
+//account of the bank itself
+Account bankAccount;
 
 int main(int argc, char* argv[]){
 
     //validate programm min param
     if(argc<2){
-        cout << "too few params\n";
+        cout << FAILED_RUN_ATTEMPT;
+        //TODO verify correct status exit number
         return 1;
     }
 
@@ -40,13 +42,13 @@ int main(int argc, char* argv[]){
         pthread_create(&atmThreads[i],NULL,atmThreadWrapper,(void*)(&atmThreadsData[i]));
     }
 
-    //TODO init thread for Bank
+    //init thread for Bank
     pthread_t bankThread;
     BankThreadData bankThreadData;
-    bankThreadData.pBank = &bank;
+    bankThreadData.pBankAccount = &bankAccount;
     pthread_create(&bankThread,NULL,bankThreadWrapper,(void*)(&bankThreadData));
 
-    // a thread that print the current state of the bank
+    //init thread that print the current state of the bank
     pthread_t statusThread;
     pthread_create(&statusThread,NULL,statusThreadWrapper,NULL);
 
@@ -70,8 +72,5 @@ int main(int argc, char* argv[]){
 }
 
 void* statusThreadWrapper(void* data){
-    BankThreadData *pBankThreadData = (BankThreadData*)data;
-    Bank *pBank = pBankThreadData->pBank;
     //TODO print the status of accounts and the bank
-
 }
