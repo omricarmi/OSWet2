@@ -20,10 +20,13 @@ int Account::getBalance() {
 }
 
 void Account::setBalance(int balance) {
+    //TODO not sure if this func needed maybe delete it
     enterWrite();
     mBalance = balance;
     leaveWrite();
 }
+
+
 
 bool Account::isVIP(){
     enterRead();
@@ -63,4 +66,25 @@ void Account::enterWrite(){
 
 void Account::leaveWrite() {
     pthread_mutex_unlock(&writeMutex);
+}
+
+int Account::draw(int drawAmount) {
+    enterWrite();
+    int newBalance = -1;
+    if(drawAmount <= mBalance){
+        mBalance -= drawAmount;
+        newBalance = mBalance;
+    }
+    leaveWrite();
+    return newBalance;
+}
+
+int Account::deposit(int depositAmount) {
+    //TODO can be a case when deposit A but before log A make another deposit B then log B and then log A, is it OK ?
+    //TODO check if need to verify positive deposit
+    enterWrite();
+    mBalance += depositAmount;
+    int newBalance = mBalance;
+    leaveWrite();
+    return newBalance;
 }

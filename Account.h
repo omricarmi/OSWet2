@@ -60,6 +60,10 @@ public:
 
     void setIsVIP(bool isVIP);
 
+    int draw(int drawAmount);
+
+    int deposit(int depositAmount);
+
 
 };
 
