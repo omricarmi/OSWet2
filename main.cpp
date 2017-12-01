@@ -8,6 +8,7 @@
 #include "consts.h"
 #include "ATM.h"
 #include "Account.h"
+#include "Bank.h"
 #include <pthread.h>
 #include <map>
 
@@ -16,6 +17,7 @@ using namespace std;
 /***** GLOBALS *****/
 //list of bank accounts
 std::map<int,Account> accounts;
+Bank bank;
 
 int main(int argc, char* argv[]){
 
@@ -39,13 +41,24 @@ int main(int argc, char* argv[]){
     }
 
     //TODO init thread for Bank
-    
+    pthread_t bankThread;
+    BankThreadData bankThreadData;
+    bankThreadData.pBank = &bank;
+    pthread_create(&bankThread,NULL,bankThreadWrapper,(void*)(&bankThreadData));
+
+    // a thread that print the current state of the bank
+    pthread_t statusThread;
+    pthread_create(&statusThread,NULL,statusThreadWrapper,NULL);
+
 
     //wait for ATMs threads to finish
     for (int j = 0; j < N; ++j) {
-        //TODO on 01/12/17 by Omri Carmi : check if need status return
+        //TODO check if need status return
         pthread_join(atmThreads[j],NULL);
     }
+
+    // TODO kill bank thread after ATMs finished
+    // TODO kill status thread after Bank finished
 
 //DEBUG
     for(int i=0;i<N;++i){
@@ -53,8 +66,12 @@ int main(int argc, char* argv[]){
 //        logd(msg);
     }
 
-    //TODO on 28/11/17 by Omri Carmi : init ATMs pthreads
-
-
     return 0;
+}
+
+void* statusThreadWrapper(void* data){
+    BankThreadData *pBankThreadData = (BankThreadData*)data;
+    Bank *pBank = pBankThreadData->pBank;
+    //TODO print the status of accounts and the bank
+
 }
