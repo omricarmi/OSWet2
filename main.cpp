@@ -2,10 +2,9 @@
 // Created by compm on 27/11/17.
 //
 
-#include <stdio.h>
 #include <stdlib.h>
 #include <iostream>
-#include "consts.h"
+#include "common.h"
 #include "ATM.h"
 #include "Account.h"
 #include "Bank.h"
@@ -15,11 +14,16 @@
 using namespace std;
 
 /***** GLOBALS *****/
+//TODO not sure if accounts + bankAccounts need to be globals maybe just main scope
 //list of bank accounts
 std::map<int,Account> accounts;
 //account of the bank itself
-Account bankAccount(0,123456,0); //TODO verify how to init bank account
+Account bankAccount(0,123456); //TODO verify how to init bank account
 
+/***** Function Declaration *****/
+void* statusThreadWrapper(void* data);
+
+/***** Main Entry *****/
 int main(int argc, char* argv[]){
 
     //validate programm min param
@@ -62,15 +66,24 @@ int main(int argc, char* argv[]){
     // TODO kill bank thread after ATMs finished
     // TODO kill status thread after Bank finished
 
-//DEBUG
-    for(int i=0;i<N;++i){
-//        string msg = inputFiles[i] + "\n";
-//        logd(msg);
+//DEBUG - Start
+    //demo create accounts
+    for(int i=1;i<20;i+=4){
+        accounts.insert(std::make_pair<int,Account>(100-i,Account(100-i,i)));
     }
-
+    for(int i=2;i<20;i+=4){
+        accounts.insert(std::make_pair<int,Account>(100-i,Account(100-i,i)));
+    }
+    for(int i=0;i<20;i+=4){
+        accounts.insert(std::make_pair<int,Account>(100-i,Account(100-i,i)));
+    }
+    //demo print status
+    Log() << getAccountsStatus(accounts,bankAccount);
+//DEBUG - Start
     return 0;
 }
 
+/***** Helper methods *****/
 void* statusThreadWrapper(void* data){
     //TODO print the status of accounts and the bank
 }

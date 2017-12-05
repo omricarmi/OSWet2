@@ -13,7 +13,7 @@ typedef struct _AtmThreadData {
     string inputFileName;
 } AtmThreadData;
 
-void *atmThreadWrapper(void* pAtmThreadData);
+void* atmThreadWrapper(void* pAtmThreadData);
 
 class ATM {
 

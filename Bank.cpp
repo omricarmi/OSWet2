@@ -3,3 +3,7 @@
 //
 
 #include "Bank.h"
+
+void *bankThreadWrapper(void *bankThreadData) {
+    return nullptr;
+}

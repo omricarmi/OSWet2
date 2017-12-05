@@ -2,6 +2,7 @@
 // Created by compm on 01/12/17.
 //
 
+#include <sstream>
 #include "Account.h"
 
 int Account::getId() const {
@@ -106,6 +107,49 @@ int Account::transfer(int transferAmount, Account toAccount) {
     fromAccount.leaveWrite();
     toAccount.leaveWrite();
     return success;
+}
+
+string getAccountsStatus(std::map<int, Account> accounts, Account bankAccount) {
+
+    //clear screen
+    cout << "\033[2J";
+    //move cursor to left up corner
+    cout << "\033[1;1H";
+
+    //lock all accounts include bank account
+    //TODO make sure locked in the same order every time to prevent deadlock
+    bankAccount.enterRead();
+    for (auto& item : accounts){
+        Account& account = item.second;
+        account.enterRead();
+    }
+
+    //generate status of the bank system
+    string status = "Current Bank Status\n";
+    for (auto& item : accounts){
+        Account& account = item.second;
+        status += account.getStatus();
+    }
+    //Example: "The Bank has 1500 $\n"
+    status += string("The Bank has ") + to_string(bankAccount.mBalance) + string(" $\n");
+
+    //unlock all accounts include bank account
+    bankAccount.leaveRead();
+    for (auto& item : accounts){
+        Account& account = item.second;
+        account.leaveRead();
+    }
+
+    return status;
+}
+
+string Account::getStatus() {
+//   Example: "Account 123: Balance – 12  $ , Account Password – 1234\n"
+    //TODO handle fixed width for balance , check what the correct width
+    std::ostringstream stringStream;
+    stringStream << "Account " << mId << ": Balance – " << mBalance << "  $ , Account Password – " << mPassword << endl;
+    string status = stringStream.str();
+    return status;
 }
 /*
 //another option as a friend func.

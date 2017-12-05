@@ -15,6 +15,15 @@ using namespace std;
 /** Predfined Messages **/
 const string FAILED_RUN_ATTEMPT = "illegal arguments\n";
 
+class Log{
+public:
+    static bool isDebug;
+    void operator<< (const string& msg){
+        if(isDebug) cout << "debug :\n" << msg << endl;
+    }
+};
+bool Log::isDebug = IS_DEBUG;
+
 void logd(string msg){
     if(IS_DEBUG) {
         std::cout << "debug: " << msg << endl;

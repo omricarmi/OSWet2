@@ -5,12 +5,13 @@
 #ifndef OSWET2_ACCOUNT_H
 #define OSWET2_ACCOUNT_H
 
-
 #include <pthread.h>
 #include <array>
 #include <iostream>
+#include <map>
 
 using namespace std;
+
 class Account {
 
 private:
@@ -29,10 +30,11 @@ private:
     void leaveRead();
     void enterWrite();
     void leaveWrite();
+    string getStatus();
 
 public:
 
-    Account(int id, int password, int balance) : mId(id), mPassword(password), mBalance(balance) {
+    Account(int id, int password) : mId(id), mPassword(password), mBalance(0), mIsVIP(false) {
 
         readCount = 0;
         //TODO verify if init mutex make it unlock by default
@@ -58,9 +60,10 @@ public:
     int deposit(int depositAmount);
     int transfer(int transferAmount, Account toAccount);
 //    friend int transferMoney(int transferAmount,Account fromAccount,Account toAccount);
+    friend string getAccountsStatus(std::map<int,Account> accounts,Account bankAccount);
 };
 
-
+string getAccountsStatus(std::map<int,Account> accounts,Account bankAccount);
 int transferMoney(int transferAmount,Account fromAccount,Account toAccount);
 
 
