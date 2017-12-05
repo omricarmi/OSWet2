@@ -8,8 +8,8 @@ int Account::getId() const {
     return mId;
 }
 
-int Account::getPassword() const {
-    return mPassword;
+bool Account::verifyPassword(int password) const {
+    return mPassword==password;
 }
 
 int Account::getBalance() {
@@ -17,13 +17,6 @@ int Account::getBalance() {
     int balance = mBalance;
     leaveRead();
     return balance;
-}
-
-void Account::setBalance(int balance) {
-    //TODO not sure if this func needed maybe delete it
-    enterWrite();
-    mBalance = balance;
-    leaveWrite();
 }
 
 bool Account::isVIP(){
@@ -34,7 +27,7 @@ bool Account::isVIP(){
 
 }
 
-void Account::setIsVIP(bool isVIP) {
+void Account::setVIP(bool isVIP) {
     enterWrite();
     mIsVIP = isVIP;
     leaveWrite();
@@ -86,3 +79,57 @@ int Account::deposit(int depositAmount) {
     leaveWrite();
     return newBalance;
 }
+
+int Account::transfer(int transferAmount, Account toAccount) {
+    Account& fromAccount = *this;
+    if(fromAccount.mId == toAccount.mId){
+        return -2; // for same id
+    }
+    //lock order by id to prevent dead-lock
+    if(fromAccount.mId > toAccount.mId) {
+        fromAccount.enterWrite();
+        toAccount.enterWrite();
+    }else{
+        toAccount.enterWrite();
+        fromAccount.enterWrite();
+    }
+    int success = -1; //for not enough money
+    //transfer money if there is enough
+    if(fromAccount.mBalance >= transferAmount){
+        //take from one account
+        fromAccount.mBalance -= transferAmount;
+        //put in the other one
+        toAccount.mBalance += transferAmount;
+        success = 1;
+    }
+    //TODO make sure the order is non relevant on unlock
+    fromAccount.leaveWrite();
+    toAccount.leaveWrite();
+    return success;
+}
+/*
+//another option as a friend func.
+int transferMoney(int transferAmount, Account fromAccount, Account toAccount) {
+    //lock order by id to prevent dead-lock
+    if(fromAccount.mId > toAccount.mId) {
+        fromAccount.enterWrite();
+        toAccount.enterWrite();
+    }else{
+        toAccount.enterWrite();
+        fromAccount.enterWrite();
+    }
+    int success = -1;
+    //transfer money if there is enough
+    if(fromAccount.mBalance >= transferAmount){
+        //take from one account
+        fromAccount.mBalance -= transferAmount;
+        //put in the other one
+        toAccount.mBalance += transferAmount;
+        success = 1;
+    }
+    //TODO make sure the order is non relevant on unlock
+    fromAccount.leaveWrite();
+    toAccount.leaveWrite();
+    return success;
+}
+*/

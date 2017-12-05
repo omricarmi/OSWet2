@@ -18,7 +18,7 @@ using namespace std;
 //list of bank accounts
 std::map<int,Account> accounts;
 //account of the bank itself
-Account bankAccount;
+Account bankAccount(0,123456,0); //TODO verify how to init bank account
 
 int main(int argc, char* argv[]){
 

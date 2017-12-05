@@ -16,8 +16,8 @@ class Account {
 private:
 
     //data
-    int mId;
-    int mPassword;
+    const int mId;
+    const int mPassword;
     int mBalance;
     bool mIsVIP;
 
@@ -48,26 +48,20 @@ public:
         }
     }
 
+    //TODO make all ATM orders with sleep(1)
     int getId() const;
-
-    int getPassword() const;
-
+    bool verifyPassword(int password) const;
     int getBalance();
-
-    void setBalance(int balance);
-
     bool isVIP();
-
-    void setIsVIP(bool isVIP);
-
+    void setVIP(bool isVIP);
     int draw(int drawAmount);
-
     int deposit(int depositAmount);
-
-
+    int transfer(int transferAmount, Account toAccount);
+//    friend int transferMoney(int transferAmount,Account fromAccount,Account toAccount);
 };
 
 
+int transferMoney(int transferAmount,Account fromAccount,Account toAccount);
 
 
 #endif //OSWET2_ACCOUNT_H
