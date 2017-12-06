@@ -23,6 +23,7 @@ Account bankAccount(0,123456); //TODO verify how to init bank account
 /***** Function Declaration *****/
 void* statusThreadWrapper(void* data);
 
+//TODO notice prints arent atomic and they need mutex
 /***** Main Entry *****/
 int main(int argc, char* argv[]){
 

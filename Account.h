@@ -18,7 +18,7 @@ private:
 
     //data
     const int mId;
-    const int mPassword;
+    const int mPassword; //TODO verify 4 digits exactly
     int mBalance;
     bool mIsVIP;
 
@@ -48,6 +48,13 @@ public:
             //TODO verift that exit() allowed
             exit(-1);
         }
+    }
+
+    ~Account(){
+        //TODO verify how to
+        pthread_mutex_unlock(&readMutex);
+        pthread_mutex_unlock(&writeMutex);
+
     }
 
     //TODO make all ATM orders with sleep(1)
