@@ -16,7 +16,11 @@ void* bankThreadWrapper(void* bankThreadData);
 
 class Bank {
 private:
-    Account bankAccount;
+    //TODO decide what better?
+    // origin bank account here with ref in the main
+    //      or
+    // origin bank account in the main with ref here
+    Account& bankAccount;
 public:
 
 };

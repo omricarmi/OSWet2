@@ -45,16 +45,13 @@ public:
         {
             string FailedMutex = (initReadMutexCheck != 0) ? "Reader Mutex" : "Writer Mutex";
             cerr << "pthread_mutex_init failed:" << FailedMutex << endl;
-            //TODO verift that exit() allowed
+            //TODO verify that exit() allowed
             exit(-1);
         }
     }
 
     ~Account(){
-        //TODO verify how to
-        pthread_mutex_unlock(&readMutex);
-        pthread_mutex_unlock(&writeMutex);
-
+        //TODO verify how to destroy mutex correctly
     }
 
     //TODO make all ATM orders with sleep(1)
@@ -65,13 +62,13 @@ public:
     void setVIP(bool isVIP);
     int draw(int drawAmount);
     int deposit(int depositAmount);
-    int transfer(int transferAmount, Account toAccount);
+    int transfer(int transferAmount, Account& toAccount);
 //    friend int transferMoney(int transferAmount,Account fromAccount,Account toAccount);
-    friend string getAccountsStatus(std::map<int,Account> accounts,Account bankAccount);
+    friend string getAccountsStatus(std::map<int,Account>& accounts,Account& bankAccount);
 };
 
-string getAccountsStatus(std::map<int,Account> accounts,Account bankAccount);
-int transferMoney(int transferAmount,Account fromAccount,Account toAccount);
+string getAccountsStatus(std::map<int,Account>& accounts,Account& bankAccount);
+//int transferMoney(int transferAmount,Account& fromAccount,Account& toAccount);
 
 
 #endif //OSWET2_ACCOUNT_H

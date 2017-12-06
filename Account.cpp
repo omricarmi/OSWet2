@@ -81,7 +81,7 @@ int Account::deposit(int depositAmount) {
     return newBalance;
 }
 
-int Account::transfer(int transferAmount, Account toAccount) {
+int Account::transfer(int transferAmount, Account& toAccount) {
     Account& fromAccount = *this;
     if(fromAccount.mId == toAccount.mId){
         return -2; // for same id
@@ -109,12 +109,7 @@ int Account::transfer(int transferAmount, Account toAccount) {
     return success;
 }
 
-string getAccountsStatus(std::map<int, Account> accounts, Account bankAccount) {
-
-    //clear screen
-    cout << "\033[2J";
-    //move cursor to left up corner
-    cout << "\033[1;1H";
+string getAccountsStatus(std::map<int, Account>& accounts, Account& bankAccount) {
 
     //lock all accounts include bank account
     //TODO make sure locked in the same order every time to prevent deadlock
@@ -153,7 +148,7 @@ string Account::getStatus() {
 }
 /*
 //another option as a friend func.
-int transferMoney(int transferAmount, Account fromAccount, Account toAccount) {
+int transferMoney(int transferAmount, Account& fromAccount, Account& toAccount) {
     //lock order by id to prevent dead-lock
     if(fromAccount.mId > toAccount.mId) {
         fromAccount.enterWrite();
