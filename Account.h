@@ -9,6 +9,7 @@
 #include <array>
 #include <iostream>
 #include <map>
+typedef int AccountId;
 
 using namespace std;
 
@@ -17,7 +18,7 @@ class Account {
 private:
 
     //data
-    const int mId;
+    const AccountId mId;
     const int mPassword; //TODO verify 4 digits exactly
     int mBalance;
     bool mIsVIP;

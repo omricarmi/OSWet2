@@ -67,6 +67,7 @@ int main(int argc, char* argv[]){
 
     // TODO kill bank thread after ATMs finished
     // TODO kill status thread after Bank finished
+    // TODO destruct accounts
 
     /***** Not Thread Safe - END *****/
 //DEBUG - START

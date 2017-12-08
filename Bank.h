@@ -11,7 +11,7 @@
 /***** GLOBALS *****/
 //TODO not sure if accounts + bankAccounts need to be globals maybe just main scope
 //list of bank accounts
-extern std::map<int,Account&> accounts;
+extern std::map<AccountId ,Account&> accounts;
 
 
 typedef struct _BankThreadData{

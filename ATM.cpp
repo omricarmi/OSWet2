@@ -5,17 +5,17 @@
 
 #include "ATM.h"
 
-void openAccount(vector<string> words, int i);
+void openAccount(vector<string> words, int atmId);
 
-void makeVip(vector<string> words, int i);
+void makeVip(vector<string> words, int atmId);
 
-void deposit(vector<string> words, int i);
+void deposit(vector<string> words, int atmId);
 
-void withdraw(vector<string> words, int i);
+void withdraw(vector<string> words, int atmId);
 
-void getBalance(vector<string> words, int i);
+void getBalance(vector<string> words, int atmId);
 
-void transfer(vector<string> words, int i);
+void transfer(vector<string> words, int atmId);
 
 void* atmThreadWrapper(void *pAtmThreadData) {
     //extract data from caller
@@ -62,24 +62,37 @@ void* atmThreadWrapper(void *pAtmThreadData) {
     return nullptr;
 }
 
-void transfer(vector<string> words, int i) {
+void transfer(vector<string> words, int atmId) {
 
 }
 
-void getBalance(vector<string> words, int i) {
+void getBalance(vector<string> words, int atmId) {
 
 }
 
-void withdraw(vector<string> words, int i) {
+void withdraw(vector<string> words, int atmId) {
 
 }
 
-void deposit(vector<string> words, int i) {
+void deposit(vector<string> words, int atmId) {
 
 }
 
-void makeVip(vector<string> words, int i) {
-
+void makeVip(vector<string> words, int atmId) {
+    int accountId = stoi(words[1]);
+    int password = stoi(words[2]);
+    // in case the account don't exist or incorrect password ,log error
+    auto it = accounts.find(accountId);
+    if( it==accounts.end() || !(*it).second.verifyPassword(password)){
+        std::ostringstream stringStream;
+        //Example: Error <ATM ID>: Your transaction failed – password for account id <id> is incorrect
+        stringStream << "Error " << atmId << ": Your transaction failed – password for account id " << accountId << " is incorrect" << endl;
+        string errMsg = stringStream.str();
+        logSafe(errMsg);
+        return;
+    }
+    //set account to be VIP
+    (*it).second.setVIP(true);
 }
 
 void openAccount(vector<string> words, int atmId) {
@@ -90,7 +103,6 @@ void openAccount(vector<string> words, int atmId) {
     if(accounts.find(accountId) != accounts.end() ){
 
         std::ostringstream stringStream;
-        "Error <ATM ID>: Your transaction failed – account with the same id exists"
         stringStream << "Error " << atmId << ": Your transaction failed – account with the same id exists" << endl;
         string errMsg = stringStream.str();
         logSafe(errMsg);
@@ -99,6 +111,11 @@ void openAccount(vector<string> words, int atmId) {
     //init the account
     Account *newAccount = new Account(accountId, password,initialAmount);
     //add the account to the global map
-    accounts.insert();
+    accounts.insert(pair<AccountId,Account&>(accountId,*newAccount));
+    // print creation success
+    std::ostringstream stringStream;
+    stringStream <<  atmId <<": New account id is " << accountId <<" with password " << password <<" and initial balance "<< initialAmount <<endl;
+    string msg = stringStream.str();
+    logSafe(msg);
 
 }
