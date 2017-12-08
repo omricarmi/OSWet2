@@ -63,11 +63,78 @@ void* atmThreadWrapper(void *pAtmThreadData) {
 }
 
 void transfer(vector<string> words, int atmId) {
-
+    int accountId = stoi(words[1]);
+    int password = stoi(words[2]);
+    int targetAccountId = stoi(words[3]);
+    int transferAmount = stoi(words[4]);
+    // in case source account doesn't exist or incorrect password ,log error
+    auto itFrom = accounts.find(accountId);
+    auto itTo = accounts.find(targetAccountId);
+    if( itFrom==accounts.end() || !(*itFrom).second.verifyPassword(password)){
+        std::ostringstream stringStream;
+        //Example: Error <ATM ID>: Your transaction failed – password for account id <id> is incorrect
+        stringStream << "Error " << atmId << ": Your transaction failed – password for account id " << accountId << " is incorrect" << endl;
+        string errMsg = stringStream.str();
+        logSafe(errMsg);
+        return;
+    }
+    //TODO in the PDF there is no reference to a case account does not exists - the same for all other trans types
+    //in case target does not exists
+    if( itTo==accounts.end() ){
+        std::ostringstream stringStream;
+        //Example: Error <ATM ID>: Your transaction failed – password for account id <id> is incorrect
+        //TODO what to log?????????
+        stringStream << "Error " << atmId << ": Your transaction failed – password for account id " << accountId << " is incorrect" << endl;
+        string errMsg = stringStream.str();
+        logSafe(errMsg);
+        return;
+    }
+    //try to make the transaction
+    TransferData data = (*itFrom).second.transfer(transferAmount,(*itTo).second);
+    if(data.status == 1){
+        //log success transfer
+        std::ostringstream stringStream;
+        //Example (is one line): <ATM ID>: Transfer <amount> from account <account> to account <target_account>
+        // new account balance is <account_bal> new target account balance is <target_bal>
+        stringStream << atmId << ": Transfer " << transferAmount << " from account " << accountId << " to account "
+                     << targetAccountId << " new account balance is " << data.fromNewBalance
+                     << " new target account balance is "<< data.toNewBalance
+                     << endl;
+        string errMsg = stringStream.str();
+        logSafe(errMsg);
+        return;
+    }else{
+        //on transfer failed log it
+        std::ostringstream stringStream;
+        //Example: Error <ATM ID>: Your transaction failed – account id <id> balance is lower than <amount>
+        stringStream << "Error " << atmId << ": Your transaction failed – account id " <<
+                                                accountId << " balance is lower than " << transferAmount << endl;
+        string errMsg = stringStream.str();
+        logSafe(errMsg);
+        return;
+    }
 }
 
 void getBalance(vector<string> words, int atmId) {
-
+    int accountId = stoi(words[1]);
+    int password = stoi(words[2]);
+    // in case the account don't exist or incorrect password ,log error
+    auto it = accounts.find(accountId);
+    if( it==accounts.end() || !(*it).second.verifyPassword(password)){
+        std::ostringstream stringStream;
+        //Example: Error <ATM ID>: Your transaction failed – password for account id <id> is incorrect
+        stringStream << "Error " << atmId << ": Your transaction failed – password for account id " << accountId << " is incorrect" << endl;
+        string errMsg = stringStream.str();
+        logSafe(errMsg);
+        return;
+    }
+    //log the desired account balance
+    int balance = (*it).second.getBalance();
+    std::ostringstream stringStream;
+    //Example: <ATM ID>: Account <id> balance is <bal>
+    stringStream << atmId << ": Account " << accountId << " balance is " << balance << endl;
+    string msg = stringStream.str();
+    logSafe(msg);
 }
 
 void withdraw(vector<string> words, int atmId) {

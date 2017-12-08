@@ -81,10 +81,10 @@ int Account::deposit(int depositAmount) {
     return newBalance;
 }
 
-int Account::transfer(int transferAmount, Account& toAccount) {
+TransferData Account::transfer(int transferAmount, Account& toAccount) {
     Account& fromAccount = *this;
     if(fromAccount.mId == toAccount.mId){
-        return -2; // for same id
+        return TransferData(-2,-1,-1); // for same id error
     }
     //lock order by id to prevent dead-lock
     if(fromAccount.mId < toAccount.mId) {
@@ -94,14 +94,14 @@ int Account::transfer(int transferAmount, Account& toAccount) {
         toAccount.enterWrite();
         fromAccount.enterWrite();
     }
-    int success = -1; //for not enough money
+    TransferData data(-1,-1,-1);
     //transfer money if there is enough
     if(fromAccount.mBalance >= transferAmount){
         //take from one account
         fromAccount.mBalance -= transferAmount;
         //put in the other one
         toAccount.mBalance += transferAmount;
-        success = 1;
+        data.init(1,fromAccount.mBalance,toAccount.mBalance);
     }
     //TODO make sure the order is non relevant on unlock
     if(fromAccount.mId < toAccount.mId){
@@ -111,8 +111,7 @@ int Account::transfer(int transferAmount, Account& toAccount) {
         fromAccount.leaveWrite();
         toAccount.leaveWrite();
     }
-
-    return success;
+    return data;
 }
 
 string getAccountsStatus(std::map<int, Account>& accounts, Account& bankAccount) {
@@ -179,3 +178,4 @@ int transferMoney(int transferAmount, Account& fromAccount, Account& toAccount) 
     return success;
 }
 */
+

@@ -13,6 +13,22 @@ typedef int AccountId;
 
 using namespace std;
 
+class TransferData{
+private:
+public:
+    TransferData(int status, int fromNewBalance, int toNewBalance) : status(status),
+                                                                                   fromNewBalance(fromNewBalance),
+                                                                                   toNewBalance(toNewBalance) {}
+    void init(int status, int fromNewBalance, int toNewBalance){
+        this->status = status;
+        this->fromNewBalance = fromNewBalance;
+        this->toNewBalance = toNewBalance;
+    }
+    int status = -1;
+    int fromNewBalance = -1;
+    int toNewBalance = -1;
+};
+
 class Account {
 
 private:
@@ -63,7 +79,7 @@ public:
     void setVIP(bool isVIP);
     int draw(int drawAmount);
     int deposit(int depositAmount);
-    int transfer(int transferAmount, Account& toAccount);
+    TransferData transfer(int transferAmount, Account& toAccount);
 //    friend int transferMoney(int transferAmount,Account fromAccount,Account toAccount);
     friend string getAccountsStatus(std::map<int,Account>& accounts,Account& bankAccount);
 };
