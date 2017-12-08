@@ -34,7 +34,7 @@ private:
 
 public:
 
-    Account(int id, int password) : mId(id), mPassword(password), mBalance(0), mIsVIP(false) {
+    Account(int id, int password, int initialAmount) : mId(id), mPassword(password), mBalance(initialAmount), mIsVIP(false) {
 
         readCount = 0;
         //TODO verify if init mutex make it unlock by default

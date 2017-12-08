@@ -87,7 +87,7 @@ int Account::transfer(int transferAmount, Account& toAccount) {
         return -2; // for same id
     }
     //lock order by id to prevent dead-lock
-    if(fromAccount.mId > toAccount.mId) {
+    if(fromAccount.mId < toAccount.mId) {
         fromAccount.enterWrite();
         toAccount.enterWrite();
     }else{
@@ -104,8 +104,14 @@ int Account::transfer(int transferAmount, Account& toAccount) {
         success = 1;
     }
     //TODO make sure the order is non relevant on unlock
-    fromAccount.leaveWrite();
-    toAccount.leaveWrite();
+    if(fromAccount.mId < toAccount.mId){
+        toAccount.leaveWrite();
+        fromAccount.leaveWrite();
+    } else{
+        fromAccount.leaveWrite();
+        toAccount.leaveWrite();
+    }
+
     return success;
 }
 
@@ -129,6 +135,7 @@ string getAccountsStatus(std::map<int, Account>& accounts, Account& bankAccount)
     status += string("The Bank has ") + to_string(bankAccount.mBalance) + string(" $\n");
 
     //unlock all accounts include bank account
+    //TODO check about unlock reverse order
     bankAccount.leaveRead();
     for (auto& item : accounts){
         Account& account = item.second;

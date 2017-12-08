@@ -13,6 +13,9 @@ using namespace std;
 //call startPrintSafe() before you want to start print thread safe
 void startPrintSafe();
 
+//atomic log of msg to log.txt
+void logSafe(const string& msg);
+
 //atomic print of msg
 void printSafe(const string& msg);
 

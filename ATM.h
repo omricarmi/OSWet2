@@ -4,8 +4,13 @@
 
 #ifndef OSWET2_ATM_H
 #define OSWET2_ATM_H
-
+#include <fstream>
+#include <iostream>
+#include <vector>
+#include "common.h"
 #include <string>
+#include "Bank.h"
+#include "PrintSafe.h"
 using namespace std;
 
 typedef struct _AtmThreadData {
