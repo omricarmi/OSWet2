@@ -86,7 +86,7 @@ void openAccount(vector<string> words, int atmId) {
     int accountId = stoi(words[1]);
     int password = stoi(words[2]);
     int initialAmount = stoi(words[3]);
-    // in case there is already an account with the same id
+    // in case there is already an account with the same id ,log error
     if(accounts.find(accountId) != accounts.end() ){
 
         std::ostringstream stringStream;
@@ -96,5 +96,9 @@ void openAccount(vector<string> words, int atmId) {
         logSafe(errMsg);
         return;
     }
+    //init the account
     Account *newAccount = new Account(accountId, password,initialAmount);
+    //add the account to the global map
+    accounts.insert();
+
 }

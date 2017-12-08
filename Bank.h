@@ -12,8 +12,6 @@
 //TODO not sure if accounts + bankAccounts need to be globals maybe just main scope
 //list of bank accounts
 extern std::map<int,Account&> accounts;
-//account of the bank itself
-extern Account bankAccount(0,123456); //TODO verify how to init bank account
 
 
 typedef struct _BankThreadData{
