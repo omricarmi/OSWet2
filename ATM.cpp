@@ -5,6 +5,8 @@
 
 #include "ATM.h"
 
+//TODO add new log error when account doesn't exists !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
+
 void openAccount(vector<string> words, int atmId);
 
 void makeVip(vector<string> words, int atmId);
@@ -100,8 +102,8 @@ void transfer(vector<string> words, int atmId) {
                      << targetAccountId << " new account balance is " << data.fromNewBalance
                      << " new target account balance is "<< data.toNewBalance
                      << endl;
-        string errMsg = stringStream.str();
-        logSafe(errMsg);
+        string msg = stringStream.str();
+        logSafe(msg);
         return;
     }else{
         //on transfer failed log it
@@ -153,8 +155,11 @@ void withdraw(vector<string> words, int atmId) {
         logSafe(errMsg);
         return;
     }
+
+    //try to withdraw
+    int withdrawResult = (*it).second.draw(amount);
     // in case the withdraw amount is bigger than the current balance
-    if ((*it).second.getBalance() > amount){
+    if ( withdrawResult == -1 ){
         //Example: Error <ATM ID>: Your transaction failed – password for account id <id> is incorrect
         stringStream << "Error " << atmId << ": Your transaction failed – account id " << accountId << " balance is lower than " << amount << endl;
         string errMsg = stringStream.str();
@@ -162,10 +167,9 @@ void withdraw(vector<string> words, int atmId) {
         return;
     }
 
-    (*it).second.draw(amount);
     // log for success withdrawal
     //Example:<ATM ID>: Account <id> new balance is <bal> after <amount> $ was withdrew
-    stringStream << atmId << ": Account " << accountId << " new balance is " << (*it).second.getBalance() << " after " << amount << " $ was withdrew" << endl;
+    stringStream << atmId << ": Account " << accountId << " new balance is " << withdrawResult << " after " << amount << " $ was withdrew" << endl;
     string msg = stringStream.str();
     logSafe(msg);
 
@@ -188,10 +192,11 @@ void deposit(vector<string> words, int atmId) {
         logSafe(errMsg);
         return;
     }
-    //set account to be VIP
-    (*it).second.deposit(amount);
+
+    // deposit
+    int newBalance = (*it).second.deposit(amount);
     //Example: <ATM ID>: Account <id> new balance is <bal> after <amount> $ was deposited 
-    stringStream << atmId << ": Account " << accountId << " new balance is " << (*it).second.getBalance() << " after " << amount << " $ was deposited" << endl;
+    stringStream << atmId << ": Account " << accountId << " new balance is " << newBalance << " after " << amount << " $ was deposited" << endl;
     string msg = stringStream.str();
     logSafe(msg);
 
