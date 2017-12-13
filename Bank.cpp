@@ -9,7 +9,6 @@
 #include <pthread.h>
 
 /***** GLOBALS *****/
-//TODO not sure if accounts + bankAccounts need to be globals maybe just main scope
 //list of bank accounts
 std::map<AccountId ,Account&> accounts;
 //account of the bank itself
@@ -44,7 +43,7 @@ void chargeTaxWrapper() {
         if(amountCharged != -1){
             std::ostringstream stringStream;
             //Example: Bank: commissions of <#> % were charged, the bank gained <#> $ from account <acc id>
-            stringStream << TAX_LOG(percents,amountCharged,account.getId()) << endl;
+            stringStream << LOG_TAX(percents,amountCharged,account.getId()) << endl;
             string msg = stringStream.str();
             logSafe(msg);
         }

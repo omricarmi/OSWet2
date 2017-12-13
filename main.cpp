@@ -28,7 +28,7 @@ int main(int argc, char* argv[]){
 
     //validate program minimum param
     if(argc<2){
-        cout << FAILED_RUN_ATTEMPT;
+        cout << ERR_FAILED_RUN_ATTEMPT << endl;
         //TODO verify correct status exit number
         return 1;
     }

@@ -9,7 +9,6 @@
 #include "Account.h"
 
 /***** GLOBALS *****/
-//TODO not sure if accounts + bankAccounts need to be globals maybe just main scope
 //list of bank accounts
 extern std::map<AccountId ,Account&> accounts;
 

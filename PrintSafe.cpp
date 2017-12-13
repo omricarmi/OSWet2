@@ -39,7 +39,7 @@ void printSafe(const string& msg) {
     pthread_mutex_unlock(&printMutex);
 }
 
-// TODO - print to log.txt instead cout. createfile at start and close at finish
+// TODO - print to log.txt instead cout. createfile at start and close at finish - O
 void logSafe(const string& msg) {
     if (logfile.is_open()) {
         pthread_mutex_lock(&logMutex);
