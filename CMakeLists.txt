@@ -4,7 +4,7 @@ project(OSWet2)
 set(CMAKE_CXX_STANDARD 11)
 
 
-set(SOURCE_FILES main.cpp ATM.cpp ATM.h common.h Account.cpp Account.h Bank.cpp Bank.h PrintSafe.cpp PrintSafe.h)
+set(SOURCE_FILES main.cpp ATM.cpp ATM.h common.h Account.cpp Account.h Bank.cpp Bank.h PrintSafe.cpp PrintSafe.h common.cpp)
 add_executable(OSWet2 ${SOURCE_FILES})
 
 set(THREADS_PREFER_PTHREAD_FLAG ON)
