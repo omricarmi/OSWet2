@@ -3,6 +3,7 @@
 //
 
 #include <stdlib.h>
+#include <unistd.h>
 #include <iostream>
 #include "common.h"
 #include "ATM.h"
@@ -52,7 +53,6 @@ int main(int argc, char* argv[]){
     //init thread for Bank
     pthread_t bankThread;
     BankThreadData bankThreadData;
-    bankThreadData.pBankAccount = &bankAccount;
     pthread_create(&bankThread,NULL,bankThreadWrapper,(void*)(&bankThreadData));
 
     //init thread that print the current state of the bank
@@ -66,24 +66,24 @@ int main(int argc, char* argv[]){
     }
 
     // TODO kill bank thread after ATMs finished
+
     // TODO kill status thread after Bank finished
-    // TODO destruct accounts
 
     /***** Not Thread Safe - END *****/
-//DEBUG - START
-    //demo create accounts
-    for(int i=1;i<20;i+=4){
-        accounts.insert(std::make_pair<int,Account>(100-i,Account(100-i,i)));
-    }
-    for(int i=2;i<20;i+=4){
-        accounts.insert(std::make_pair<int,Account>(100-i,Account(100-i,i)));
-    }
-    for(int i=0;i<20;i+=4){
-        accounts.insert(std::make_pair<int,Account>(100-i,Account(100-i,i)));
-    }
-    //demo print status
-    Log() << getAccountsStatus(accounts,bankAccount);
-//DEBUG - END
+    // TODO verify that main ending destruct accounts dynamically allocated in openAccount in ATM.cpp
+
+////DEBUG - START
+//    //demo create accounts
+//    for(int i=1;i<20;i+=4){
+//        accounts.insert(std::make_pair<int,Account>(100-i,Account(100-i,i)));
+//    }
+//    for(int i=2;i<20;i+=4){
+//        accounts.insert(std::make_pair<int,Account>(100-i,Account(100-i,i)));
+//    }
+//    for(int i=0;i<20;i+=4){
+//        accounts.insert(std::make_pair<int,Account>(100-i,Account(100-i,i)));
+//    }
+////DEBUG - END
 
     //finish safe thread print
     finishPrintSafe();
@@ -93,10 +93,16 @@ int main(int argc, char* argv[]){
 
 /***** Helper methods *****/
 void* statusThreadWrapper(void* data){
-    //TODO print the status of accounts and the bank
-    //clear screen
-    cout << "\033[2J";
-    //move cursor to left up corner
-    cout << "\033[1;1H";
-
+    bool isContinue = true;
+    const int halfSecond = 500000;//5e5 micro sec
+    while(isContinue) {
+        usleep(halfSecond);
+        //clear screen
+        printSafe("\033[2J");
+        //move cursor to left up corner
+        printSafe("\033[1;1H");
+        //print the status of accounts and the bank
+        string status = getAccountsStatus(getBankAccount());
+        printSafe(status);
+    }
 }

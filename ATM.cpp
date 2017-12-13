@@ -35,7 +35,6 @@ void* atmThreadWrapper(void *pAtmThreadData) {
         while ( getline (myfile,line) )
         {
             words = split(line, delim);
-
             if(words[0] == "O"){
                 openAccount(words, atmId);
             }else if(words[0] == "L"){
@@ -49,13 +48,14 @@ void* atmThreadWrapper(void *pAtmThreadData) {
             }else if(words[0] == "T"){
                 transfer(words, atmId);
             }
-
+            //make 0.1 sec delay
+            usleep(100000);
         }
         myfile.close();
     }
     else{
         cerr << "failed to open file: " << inputFileName << endl;
-        exit(-1);
+        exit(-1);////TODO does -1 is correct?
     }
 
 
@@ -266,6 +266,7 @@ void makeVip(vector<string> words, int atmId) {
 }
 
 void openAccount(vector<string> words, int atmId) {
+
     int accountId = stoi(words[1]);
     int password = stoi(words[2]);
     int initialAmount = stoi(words[3]);
@@ -278,6 +279,8 @@ void openAccount(vector<string> words, int atmId) {
         logSafe(errMsg);
         return;
     }
+    //TODO make 1 sec delay - not sure if the correct place for sleep in openAccount
+    sleep(1);
     //init the account
     Account *newAccount = new Account(accountId, password,initialAmount);
     //add the account to the global map

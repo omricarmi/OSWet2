@@ -9,6 +9,7 @@
 #include <iostream>
 #include <sstream>
 #include <vector>
+#include <unistd.h>
 
 using namespace std;
 
@@ -19,6 +20,7 @@ using namespace std;
 const string FAILED_RUN_ATTEMPT = "illegal arguments\n";
 //TODO make below macro to all messages
 #define ACCOUNT_NOT_EXISTS(atmId,accountId) "Error " << atmId << ": Your transaction failed – account id " << accountId << " does not exist"
+#define TAX_LOG(taxPercent,amountCharged,accountId) "Bank: commissions of " << taxPercent << " % were charged, the bank gained " << amountCharged << " $ from account " << accountId
 
 class Log{
 public:

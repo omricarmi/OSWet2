@@ -13,23 +13,12 @@
 //list of bank accounts
 extern std::map<AccountId ,Account&> accounts;
 
-
 typedef struct _BankThreadData{
     Account* pBankAccount;
 } BankThreadData;
 
 void* bankThreadWrapper(void* bankThreadData);
 
-class Bank {
-private:
-    //TODO decide what better?
-    // origin bank account here with ref in the main
-    //      or
-    // origin bank account in the main with ref here
-    Account& bankAccount;
-public:
-
-};
-
+Account& getBankAccount();
 
 #endif //OSWET2_BANK_H

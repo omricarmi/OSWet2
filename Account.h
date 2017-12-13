@@ -9,6 +9,7 @@
 #include <array>
 #include <iostream>
 #include <map>
+#include "common.h"
 typedef int AccountId;
 
 using namespace std;
@@ -69,6 +70,12 @@ public:
 
     ~Account(){
         //TODO verify how to destroy mutex correctly
+        enterRead();
+        leaveRead();
+        enterWrite();
+        leaveWrite();
+        pthread_mutex_destroy(&readMutex);
+        pthread_mutex_destroy(&writeMutex);
     }
 
     //TODO make all ATM orders with sleep(1)
@@ -79,13 +86,12 @@ public:
     void setVIP(bool isVIP);
     int draw(int drawAmount);
     int deposit(int depositAmount);
+    int chargeTax(Account &bankAccount, double taxPrecents);
     TransferData transfer(int transferAmount, Account& toAccount);
-//    friend int transferMoney(int transferAmount,Account fromAccount,Account toAccount);
-    friend string getAccountsStatus(std::map<int,Account>& accounts,Account& bankAccount);
+    friend string getAccountsStatus(Account& bankAccount);
 };
 
-string getAccountsStatus(std::map<int,Account>& accounts,Account& bankAccount);
-//int transferMoney(int transferAmount,Account& fromAccount,Account& toAccount);
+string getAccountsStatus(Account& bankAccount);
 
 
 #endif //OSWET2_ACCOUNT_H

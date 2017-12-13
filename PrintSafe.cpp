@@ -2,11 +2,12 @@
 // Created by compm on 06/12/17.
 //
 
+#include <fstream>
 #include "PrintSafe.h"
 
 pthread_mutex_t printMutex;
 pthread_mutex_t logMutex;
-
+ofstream logfile;
 void startPrintSafe() {
     //TODO verify if init mutex make it unlock by default
     int initLogMutexCheck =  pthread_mutex_init(&logMutex,NULL);
@@ -21,6 +22,15 @@ void startPrintSafe() {
         //TODO verify that exit() allowed
         exit(-1);
     }
+
+    //verify open log file
+    if (!logfile.is_open())
+    {
+        logfile.open("log.txt");
+        cerr << "Failed to open log.txt file for write." << endl;
+        //TODO verify that exit() allowed
+        exit(-1);
+    }
 }
 
 void printSafe(const string& msg) {
@@ -31,9 +41,15 @@ void printSafe(const string& msg) {
 
 // TODO - print to log.txt instead cout. createfile at start and close at finish
 void logSafe(const string& msg) {
-    pthread_mutex_lock(&logMutex);
-    cout << msg;
-    pthread_mutex_unlock(&logMutex);
+    if (logfile.is_open()) {
+        pthread_mutex_lock(&logMutex);
+        logfile << msg;
+        pthread_mutex_unlock(&logMutex);
+    }else{
+        cerr << "Failed to write to log.txt file." << endl;
+        //TODO verify that exit() allowed
+        exit(-1);
+    }
 }
 
 
@@ -53,4 +69,6 @@ void finishPrintSafe() {
         //TODO verify that exit() allowed
         exit(-1);
     }
+    //close log.txt file
+    logfile.close();
 }

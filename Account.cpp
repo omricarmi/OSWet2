@@ -3,7 +3,9 @@
 //
 
 #include <sstream>
+#include <cmath>
 #include "Account.h"
+#include "Bank.h"
 
 int Account::getId() const {
     return mId;
@@ -15,21 +17,26 @@ bool Account::verifyPassword(int password) const {
 
 int Account::getBalance() {
     enterRead();
+    //make 1 sec delay
+    sleep(1);
     int balance = mBalance;
     leaveRead();
     return balance;
 }
 
-bool Account::isVIP(){
-    enterRead();
-    bool isVIP = mIsVIP;
-    leaveRead();
-    return isVIP;
-
-}
+//TODO safe delete this function
+//bool Account::isVIP(){
+//    enterRead();
+//    bool isVIP = mIsVIP;
+//    leaveRead();
+//    return isVIP;
+//
+//}
 
 void Account::setVIP(bool isVIP) {
     enterWrite();
+    //make 1 sec delay
+    sleep(1);
     mIsVIP = isVIP;
     leaveWrite();
 }
@@ -62,6 +69,8 @@ void Account::leaveWrite() {
 
 int Account::draw(int drawAmount) {
     enterWrite();
+    //make 1 sec delay
+    sleep(1);
     int newBalance = -1;
     if(drawAmount <= mBalance){
         mBalance -= drawAmount;
@@ -75,6 +84,8 @@ int Account::deposit(int depositAmount) {
     //TODO can be a case when deposit A but before log A make another deposit B then log B and then log A, is it OK ?
     //TODO check if need to verify positive deposit
     enterWrite();
+    //make 1 sec delay
+    sleep(1);
     mBalance += depositAmount;
     int newBalance = mBalance;
     leaveWrite();
@@ -94,6 +105,8 @@ TransferData Account::transfer(int transferAmount, Account& toAccount) {
         toAccount.enterWrite();
         fromAccount.enterWrite();
     }
+    //make 1 sec delay
+    sleep(1);
     TransferData data(-1,-1,-1);
     //transfer money if there is enough
     if(fromAccount.mBalance >= transferAmount){
@@ -114,8 +127,7 @@ TransferData Account::transfer(int transferAmount, Account& toAccount) {
     return data;
 }
 
-string getAccountsStatus(std::map<int, Account>& accounts, Account& bankAccount) {
-
+string getAccountsStatus(Account& bankAccount) {
     //lock all accounts include bank account
     //TODO make sure locked in the same order every time to prevent deadlock
     bankAccount.enterRead();
@@ -152,6 +164,27 @@ string Account::getStatus() {
     string status = stringStream.str();
     return status;
 }
+
+int Account::chargeTax(Account &bankAccount, double taxPrecents) {
+    Account& account = *this;
+    //always lock bank first to prevent dead-lock
+    bankAccount.enterWrite();
+    account.enterWrite();
+    //if vip return -1 and finish
+    if(account.mIsVIP){
+        return -1;
+    }
+    //calc tax in money round to nearest integer value
+    int taxAmount = (int) round( (taxPrecents/100.0) * ((double)account.mBalance) );
+    account.mBalance -= taxAmount;
+    bankAccount.mBalance += taxAmount;
+    //TODO make sure the order is non relevant on unlock
+    bankAccount.leaveWrite();
+    account.leaveWrite();
+    return taxAmount;
+}
+
+
 /*
 //another option as a friend func.
 int transferMoney(int transferAmount, Account& fromAccount, Account& toAccount) {
