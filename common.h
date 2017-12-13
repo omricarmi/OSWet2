@@ -12,10 +12,13 @@
 
 using namespace std;
 
+
 #define IS_DEBUG 1
 
 /** Predfined Messages **/
 const string FAILED_RUN_ATTEMPT = "illegal arguments\n";
+//TODO make below macro to all messages
+#define ACCOUNT_NOT_EXISTS(atmId,accountId) "Error " << atmId << ": Your transaction failed – account id " << accountId << " does not exist"
 
 class Log{
 public:

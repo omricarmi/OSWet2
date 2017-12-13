@@ -34,7 +34,7 @@ void* atmThreadWrapper(void *pAtmThreadData) {
         char delim = ' ';
         while ( getline (myfile,line) )
         {
-          words = split(line, delim);
+            words = split(line, delim);
 
             if(words[0] == "O"){
                 openAccount(words, atmId);
@@ -72,7 +72,17 @@ void transfer(vector<string> words, int atmId) {
     // in case source account doesn't exist or incorrect password ,log error
     auto itFrom = accounts.find(accountId);
     auto itTo = accounts.find(targetAccountId);
-    if( itFrom==accounts.end() || !(*itFrom).second.verifyPassword(password)){
+    //check from account exists
+    if(itFrom==accounts.end()){
+        std::ostringstream stringStream;
+        //Example: Error <ATM ID>: Your transaction failed – account id <id> does not exist
+        stringStream << ACCOUNT_NOT_EXISTS(atmId,accountId) << endl;
+        string errMsg = stringStream.str();
+        logSafe(errMsg);
+        return;
+    }
+    //check correct password
+    if(!(*itFrom).second.verifyPassword(password)){
         std::ostringstream stringStream;
         //Example: Error <ATM ID>: Your transaction failed – password for account id <id> is incorrect
         stringStream << "Error " << atmId << ": Your transaction failed – password for account id " << accountId << " is incorrect" << endl;
@@ -80,13 +90,11 @@ void transfer(vector<string> words, int atmId) {
         logSafe(errMsg);
         return;
     }
-    //TODO in the PDF there is no reference to a case account does not exists - the same for all other trans types
     //in case target does not exists
     if( itTo==accounts.end() ){
         std::ostringstream stringStream;
         //Example: Error <ATM ID>: Your transaction failed – password for account id <id> is incorrect
-        //TODO what to log?????????
-        stringStream << "Error " << atmId << ": Your transaction failed – password for account id " << accountId << " is incorrect" << endl;
+        stringStream << ACCOUNT_NOT_EXISTS(atmId,targetAccountId) << endl;
         string errMsg = stringStream.str();
         logSafe(errMsg);
         return;
@@ -110,7 +118,7 @@ void transfer(vector<string> words, int atmId) {
         std::ostringstream stringStream;
         //Example: Error <ATM ID>: Your transaction failed – account id <id> balance is lower than <amount>
         stringStream << "Error " << atmId << ": Your transaction failed – account id " <<
-                                                accountId << " balance is lower than " << transferAmount << endl;
+                     accountId << " balance is lower than " << transferAmount << endl;
         string errMsg = stringStream.str();
         logSafe(errMsg);
         return;
@@ -122,7 +130,16 @@ void getBalance(vector<string> words, int atmId) {
     int password = stoi(words[2]);
     // in case the account don't exist or incorrect password ,log error
     auto it = accounts.find(accountId);
-    if( it==accounts.end() || !(*it).second.verifyPassword(password)){
+    //check account exists
+    if(it==accounts.end()) {
+        std::ostringstream stringStream;
+        //Example: Error <ATM ID>: Your transaction failed – account id <id> does not exist
+        stringStream << ACCOUNT_NOT_EXISTS(atmId, accountId) << endl;
+        string errMsg = stringStream.str();
+        logSafe(errMsg);
+    }
+    //check if password correct
+    if(!(*it).second.verifyPassword(password)){
         std::ostringstream stringStream;
         //Example: Error <ATM ID>: Your transaction failed – password for account id <id> is incorrect
         stringStream << "Error " << atmId << ": Your transaction failed – password for account id " << accountId << " is incorrect" << endl;
@@ -145,10 +162,18 @@ void withdraw(vector<string> words, int atmId) {
     int password = stoi(words[2]);
     int amount = stoi(words[3]);
 
-    std::ostringstream stringStream;
     auto it = accounts.find(accountId);
-    // in case the account doesn't exist or incorrect password ,log error
-    if( it==accounts.end() || !(*it).second.verifyPassword(password)){
+    //check account exists
+    if(it==accounts.end()) {
+        std::ostringstream stringStream;
+        //Example: Error <ATM ID>: Your transaction failed – account id <id> does not exist
+        stringStream << ACCOUNT_NOT_EXISTS(atmId, accountId) << endl;
+        string errMsg = stringStream.str();
+        logSafe(errMsg);
+    }
+    // for incorrect password ,log error
+    if(!(*it).second.verifyPassword(password)){
+        std::ostringstream stringStream;
         //Example: Error <ATM ID>: Your transaction failed – password for account id <id> is incorrect
         stringStream << "Error " << atmId << ": Your transaction failed – password for account id " << accountId << " is incorrect" << endl;
         string errMsg = stringStream.str();
@@ -160,6 +185,7 @@ void withdraw(vector<string> words, int atmId) {
     int withdrawResult = (*it).second.draw(amount);
     // in case the withdraw amount is bigger than the current balance
     if ( withdrawResult == -1 ){
+        std::ostringstream stringStream;
         //Example: Error <ATM ID>: Your transaction failed – password for account id <id> is incorrect
         stringStream << "Error " << atmId << ": Your transaction failed – account id " << accountId << " balance is lower than " << amount << endl;
         string errMsg = stringStream.str();
@@ -167,6 +193,7 @@ void withdraw(vector<string> words, int atmId) {
         return;
     }
 
+    std::ostringstream stringStream;
     // log for success withdrawal
     //Example:<ATM ID>: Account <id> new balance is <bal> after <amount> $ was withdrew
     stringStream << atmId << ": Account " << accountId << " new balance is " << withdrawResult << " after " << amount << " $ was withdrew" << endl;
@@ -182,10 +209,18 @@ void deposit(vector<string> words, int atmId) {
     int password = stoi(words[2]);
     int amount = stoi(words[3]);
 
-    std::ostringstream stringStream;
     auto it = accounts.find(accountId);
-    // in case the account doesn't exist or incorrect password ,log error
-    if( it==accounts.end() || !(*it).second.verifyPassword(password)){
+    //check account exists
+    if(it==accounts.end()) {
+        std::ostringstream stringStream;
+        //Example: Error <ATM ID>: Your transaction failed – account id <id> does not exist
+        stringStream << ACCOUNT_NOT_EXISTS(atmId, accountId) << endl;
+        string errMsg = stringStream.str();
+        logSafe(errMsg);
+    }
+    // for incorrect password ,log error
+    if(!(*it).second.verifyPassword(password)){
+    std::ostringstream stringStream;
         //Example: Error <ATM ID>: Your transaction failed – password for account id <id> is incorrect
         stringStream << "Error " << atmId << ": Your transaction failed – password for account id " << accountId << " is incorrect" << endl;
         string errMsg = stringStream.str();
@@ -195,6 +230,7 @@ void deposit(vector<string> words, int atmId) {
 
     // deposit
     int newBalance = (*it).second.deposit(amount);
+    std::ostringstream stringStream;
     //Example: <ATM ID>: Account <id> new balance is <bal> after <amount> $ was deposited 
     stringStream << atmId << ": Account " << accountId << " new balance is " << newBalance << " after " << amount << " $ was deposited" << endl;
     string msg = stringStream.str();
@@ -208,7 +244,16 @@ void makeVip(vector<string> words, int atmId) {
     int password = stoi(words[2]);
     // in case the account doesn't exist or incorrect password ,log error
     auto it = accounts.find(accountId);
-    if( it==accounts.end() || !(*it).second.verifyPassword(password)){
+    //check account exists
+    if(it==accounts.end()) {
+        std::ostringstream stringStream;
+        //Example: Error <ATM ID>: Your transaction failed – account id <id> does not exist
+        stringStream << ACCOUNT_NOT_EXISTS(atmId, accountId) << endl;
+        string errMsg = stringStream.str();
+        logSafe(errMsg);
+    }
+    //for incorrect password
+    if(!(*it).second.verifyPassword(password)){
         std::ostringstream stringStream;
         //Example: Error <ATM ID>: Your transaction failed – password for account id <id> is incorrect
         stringStream << "Error " << atmId << ": Your transaction failed – password for account id " << accountId << " is incorrect" << endl;
