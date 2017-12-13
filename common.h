@@ -22,20 +22,16 @@ const string FAILED_RUN_ATTEMPT = "illegal arguments\n";
 #define ACCOUNT_NOT_EXISTS(atmId,accountId) "Error " << atmId << ": Your transaction failed – account id " << accountId << " does not exist"
 #define TAX_LOG(taxPercent,amountCharged,accountId) "Bank: commissions of " << taxPercent << " % were charged, the bank gained " << amountCharged << " $ from account " << accountId
 
-class Log{
-public:
-    static bool isDebug;
-    void operator<< (const string& msg){
-        if(isDebug) cout << "debug :\n" << msg << endl;
-    }
-};
-bool Log::isDebug = IS_DEBUG;
+//class Log{
+//public:
+//    static bool isDebug;
+//    void operator<< (const string& msg){
+//        if(isDebug) cout << "debug :\n" << msg << endl;
+//    }
+//};
+//bool Log::isDebug = IS_DEBUG;
 
-void logd(string msg){
-    if(IS_DEBUG) {
-        std::cout << "debug: " << msg << endl;
-    }
-}
+void logd(string msg);
 
 template<typename Out>
 void split(const std::string &s, char delim, Out result) {
@@ -46,9 +42,5 @@ void split(const std::string &s, char delim, Out result) {
     }
 }
 
-std::vector<std::string> split(const std::string &s, char delim) {
-    std::vector<std::string> elems;
-    split(s, delim, std::back_inserter(elems));
-    return elems;
-}
+std::vector<std::string> split(const std::string &s, char delim);
 #endif //OSWET2_CONSTS_H

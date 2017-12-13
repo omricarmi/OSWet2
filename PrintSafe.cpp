@@ -24,9 +24,9 @@ void startPrintSafe() {
     }
 
     //verify open log file
+    logfile.open("log.txt");
     if (!logfile.is_open())
     {
-        logfile.open("log.txt");
         cerr << "Failed to open log.txt file for write." << endl;
         //TODO verify that exit() allowed
         exit(-1);

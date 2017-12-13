@@ -19,6 +19,7 @@ using namespace std;
 /***** Function Declaration *****/
 void* statusThreadWrapper(void* data);
 
+//TODO make makefile with -lpthread and c++11 flags, check what else needed
 //TODO notice prints arent atomic and they need mutex !!!
 //TODO watch out to use reference to change global variables like accounts !!!
 
