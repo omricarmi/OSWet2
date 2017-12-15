@@ -24,15 +24,6 @@ int Account::getBalance() {
     return balance;
 }
 
-//TODO safe delete this function
-//bool Account::isVIP(){
-//    enterRead();
-//    bool isVIP = mIsVIP;
-//    leaveRead();
-//    return isVIP;
-//
-//}
-
 void Account::setVIP(bool isVIP) {
     enterWrite();
     //make 1 sec delay
@@ -82,7 +73,6 @@ int Account::draw(int drawAmount) {
 
 int Account::deposit(int depositAmount) {
     //TODO can be a case when deposit A but before log A make another deposit B then log B and then log A, is it OK ?
-    //TODO check if need to verify positive deposit
     enterWrite();
     //make 1 sec delay
     sleep(1);
@@ -129,7 +119,6 @@ TransferData Account::transfer(int transferAmount, Account& toAccount) {
 
 string getAccountsStatus(Account& bankAccount) {
     //lock all accounts include bank account
-    //TODO make sure locked in the same order every time to prevent deadlock
     bankAccount.enterRead();
     for (auto& item : accounts){
         Account& account = item.second;

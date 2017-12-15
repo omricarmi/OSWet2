@@ -70,15 +70,22 @@ public:
 
     ~Account(){
         //TODO verify how to destroy mutex correctly
-        enterRead();
-        leaveRead();
-        enterWrite();
-        leaveWrite();
-        pthread_mutex_destroy(&readMutex);
-        pthread_mutex_destroy(&writeMutex);
+//        enterRead();
+//        leaveRead();
+//        enterWrite();
+//        leaveWrite();
+        if (pthread_mutex_destroy(&readMutex) != 0) {
+            cerr << "pthread_mutex_destroy failed: read Mutex." << endl;
+            //TODO verify that exit() allowed
+            exit(-1);
+        }
+        if (pthread_mutex_destroy(&writeMutex) != 0) {
+            cerr << "pthread_mutex_destroy failed: write Mutex." << endl;
+            //TODO verify that exit() allowed
+            exit(-1);
+        }
     }
 
-    //TODO make all ATM orders with sleep(1)
     int getId() const;
     bool verifyPassword(int password) const;
     int getBalance();

@@ -9,14 +9,16 @@
 #include <iostream>
 #include <sstream>
 #include <vector>
+#include "PrintSafe.h"
 #include <unistd.h>
 
 using namespace std;
 
+extern bool isATMsFinished;
+extern bool isStatusFinished;
 
 #define IS_DEBUG 1
 
-//TODO make below macro to all messages
 /** Predfined Messages **/
 #define ERR_FAILED_RUN_ATTEMPT \
     "illegal arguments"

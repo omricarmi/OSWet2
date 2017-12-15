@@ -5,7 +5,6 @@
 
 #include "ATM.h"
 
-//TODO add new log error when account doesn't exists !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
 
 void openAccount(vector<string> words, int atmId);
 
@@ -22,10 +21,9 @@ void transfer(vector<string> words, int atmId);
 void* atmThreadWrapper(void *pAtmThreadData) {
     //extract data from caller
     string inputFileName = ((AtmThreadData*)pAtmThreadData)->inputFileName;
-    // TODO - what exactly do we get as a file name
     int atmId = ((AtmThreadData*)pAtmThreadData)->atmId;
 
-    //TODO read text file and fulfill orders - O
+    //read text file and fulfill orders
     string line;
     ifstream myfile (inputFileName);
     if (myfile.is_open())
@@ -57,11 +55,7 @@ void* atmThreadWrapper(void *pAtmThreadData) {
         cerr << "failed to open file: " << inputFileName << endl;
         exit(-1);////TODO does -1 is correct?
     }
-
-
-
-
-    return nullptr;
+    return NULL;
 }
 
 void transfer(vector<string> words, int atmId) {
@@ -274,7 +268,7 @@ void openAccount(vector<string> words, int atmId) {
         logSafe(errMsg);
         return;
     }
-    //TODO make 1 sec delay - not sure if the correct place for sleep in openAccount
+    //make 1 sec delay
     sleep(1);
     //init the account
     Account *newAccount = new Account(accountId, password,initialAmount);

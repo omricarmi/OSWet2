@@ -7,6 +7,7 @@
 
 
 #include "Account.h"
+#include "common.h"
 
 /***** GLOBALS *****/
 //list of bank accounts

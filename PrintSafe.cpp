@@ -39,7 +39,6 @@ void printSafe(const string& msg) {
     pthread_mutex_unlock(&printMutex);
 }
 
-// TODO - print to log.txt instead cout. createfile at start and close at finish - O
 void logSafe(const string& msg) {
     if (logfile.is_open()) {
         pthread_mutex_lock(&logMutex);
@@ -59,12 +58,12 @@ void finishPrintSafe() {
     int destroyPrintMutexCheck = pthread_mutex_destroy(&printMutex);
     int destroyLogMutexCheck = pthread_mutex_destroy(&logMutex);
     //TODO this is how we check valid free mutex
-    if (destroyPrintMutexCheck) {
+    if (destroyPrintMutexCheck != 0) {
         cerr << "pthread_mutex_destroy failed: Print Mutex." << endl;
         //TODO verify that exit() allowed
         exit(-1);
     }
-    if (destroyLogMutexCheck) {
+    if (destroyLogMutexCheck != 0) {
         cerr << "pthread_mutex_destroy failed: Log Mutex." << endl;
         //TODO verify that exit() allowed
         exit(-1);

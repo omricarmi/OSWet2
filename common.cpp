@@ -4,9 +4,12 @@
 
 #include "common.h"
 
+bool isATMsFinished = false;
+bool isStatusFinished = false;
+
 void logd(string msg){
     if(IS_DEBUG) {
-        std::cout << "debug: " << msg << endl;
+        printSafe("debug: " + msg);
     }
 }
 

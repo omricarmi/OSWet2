@@ -13,18 +13,33 @@
 std::map<AccountId ,Account&> accounts;
 //account of the bank itself
 //accountId of bank is irrelevant
-Account bankAccount(0,0,0); //TODO verify how to init bank account
+Account bankAccount(0,0,0);
 
 
 void chargeTaxWrapper();
+
+void freeAccounts() {
+    //iterate over all accounts and free their allocation
+    for (auto& item : accounts) {
+        Account &account = item.second;
+        //TODO does delete ref delete the origin?
+        delete &account;
+    }
+}
+
 void *bankThreadWrapper(void *bankThreadData) {
-    bool isContinue = true;
-    while(isContinue){
+    // run until both atms and status are finished
+    while(!isATMsFinished || !isStatusFinished){
         //3 sec sleep
         sleep(3);
         //charge taxes from all non VIP accounts
         chargeTaxWrapper();
     }
+    //free global accounts
+    freeAccounts();
+    //TODO check why delete bank dont work
+//    delete &bankAccount;
+    return NULL;
 }
 
 Account &getBankAccount() {
@@ -32,7 +47,6 @@ Account &getBankAccount() {
 }
 
 void chargeTaxWrapper() {
-    //TODO is tax is integer precent 2% 3% 4% ???????????????????????????????
     srand (time(NULL));
     int percents = rand() % 3 + 2;
     //iterate over all accounts and charge non VIP ones
@@ -49,3 +63,4 @@ void chargeTaxWrapper() {
         }
     }
 }
+
