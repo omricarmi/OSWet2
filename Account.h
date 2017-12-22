@@ -88,13 +88,13 @@ public:
 
     int getId() const;
     bool verifyPassword(int password) const;
-    int getBalance();
+    void getBalance(int atmId);
     bool isVIP();
     void setVIP(bool isVIP);
-    int draw(int drawAmount);
-    int deposit(int depositAmount);
+    int draw(int drawAmount, int i);
+    int deposit(int depositAmount, int i);
     int chargeTax(Account &bankAccount, double taxPrecents);
-    TransferData transfer(int transferAmount, Account& toAccount);
+    TransferData transfer(int transferAmount, Account &toAccount, int atmId);
     friend string getAccountsStatus(Account& bankAccount);
 };
 

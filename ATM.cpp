@@ -94,25 +94,7 @@ void transfer(vector<string> words, int atmId) {
         return;
     }
     //try to make the transaction
-    TransferData data = (*itFrom).second.transfer(transferAmount,(*itTo).second);
-    if(data.status == 1){
-        //log success transfer
-        std::ostringstream stringStream;
-        //Example (is one line): <ATM ID>: Transfer <amount> from account <account> to account <target_account>
-        // new account balance is <account_bal> new target account balance is <target_bal>
-        stringStream << LOG_TRANSFER(atmId,transferAmount,accountId,targetAccountId,data) << endl;
-        string msg = stringStream.str();
-        logSafe(msg);
-        return;
-    }else{
-        //on transfer failed log it
-        std::ostringstream stringStream;
-        //Example: Error <ATM ID>: Your transaction failed – account id <id> balance is lower than <amount>
-        stringStream << LOG_LOW_BALANCE(atmId,accountId,transferAmount) << endl;
-        string errMsg = stringStream.str();
-        logSafe(errMsg);
-        return;
-    }
+    (*itFrom).second.transfer(transferAmount, (*itTo).second, atmId);
 }
 
 void getBalance(vector<string> words, int atmId) {
@@ -138,12 +120,7 @@ void getBalance(vector<string> words, int atmId) {
         return;
     }
     //log the desired account balance
-    int balance = (*it).second.getBalance();
-    std::ostringstream stringStream;
-    //Example: <ATM ID>: Account <id> balance is <bal>
-    stringStream << LOG_BALANCE(atmId,accountId,balance) << endl;
-    string msg = stringStream.str();
-    logSafe(msg);
+    (*it).second.getBalance(atmId);
 }
 
 void withdraw(vector<string> words, int atmId) {
@@ -172,25 +149,7 @@ void withdraw(vector<string> words, int atmId) {
     }
 
     //try to withdraw
-    int withdrawResult = (*it).second.draw(amount);
-    // in case the withdraw amount is bigger than the current balance
-    if ( withdrawResult == -1 ){
-        std::ostringstream stringStream;
-        //Example: Error <ATM ID>: Your transaction failed – password for account id <id> is incorrect
-        stringStream << LOG_LOW_BALANCE(atmId,accountId,amount) << endl;
-        string errMsg = stringStream.str();
-        logSafe(errMsg);
-        return;
-    }
-
-    std::ostringstream stringStream;
-    // log for success withdrawal
-    //Example:<ATM ID>: Account <id> new balance is <bal> after <amount> $ was withdrew
-    stringStream <<  LOG_WITHDRAW(atmId,accountId,withdrawResult,amount) << endl;
-    string msg = stringStream.str();
-    logSafe(msg);
-
-
+    (*it).second.draw(amount, atmId);
 }
 
 void deposit(vector<string> words, int atmId) {
@@ -217,16 +176,8 @@ void deposit(vector<string> words, int atmId) {
         logSafe(errMsg);
         return;
     }
-
     // deposit
-    int newBalance = (*it).second.deposit(amount);
-    std::ostringstream stringStream;
-    //Example: <ATM ID>: Account <id> new balance is <bal> after <amount> $ was deposited 
-    stringStream << LOG_DEPOSIT(atmId,accountId,newBalance,amount) << endl;
-    string msg = stringStream.str();
-    logSafe(msg);
-
-
+    (*it).second.deposit(amount, atmId);
 }
 
 void makeVip(vector<string> words, int atmId) {
@@ -272,12 +223,12 @@ void openAccount(vector<string> words, int atmId) {
     sleep(1);
     //init the account
     Account *newAccount = new Account(accountId, password,initialAmount);
-    //add the account to the global map
-    accounts.insert(pair<AccountId,Account&>(accountId,*newAccount));
     // print creation success
     std::ostringstream stringStream;
     stringStream <<  LOG_ACCOUNT_CREATED(atmId,accountId,password,initialAmount) <<endl;
     string msg = stringStream.str();
     logSafe(msg);
+    //add the account to the global map
+    accounts.insert(pair<AccountId,Account&>(accountId,*newAccount));
 
 }

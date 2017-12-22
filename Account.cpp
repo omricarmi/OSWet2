@@ -15,13 +15,16 @@ bool Account::verifyPassword(int password) const {
     return mPassword==password;
 }
 
-int Account::getBalance() {
+void Account::getBalance(int atmId) {
     enterRead();
     //make 1 sec delay
     sleep(1);
-    int balance = mBalance;
+    std::ostringstream stringStream;
+    //Example: <ATM ID>: Account <id> balance is <bal>
+    stringStream << LOG_BALANCE(atmId,mId,mBalance) << endl;
+    string msg = stringStream.str();
+    logSafe(msg);
     leaveRead();
-    return balance;
 }
 
 void Account::setVIP(bool isVIP) {
@@ -58,7 +61,7 @@ void Account::leaveWrite() {
     pthread_mutex_unlock(&writeMutex);
 }
 
-int Account::draw(int drawAmount) {
+int Account::draw(int drawAmount, int atmId) {
     enterWrite();
     //make 1 sec delay
     sleep(1);
@@ -67,22 +70,42 @@ int Account::draw(int drawAmount) {
         mBalance -= drawAmount;
         newBalance = mBalance;
     }
+    // in case the withdraw amount is bigger than the current balance
+    if ( newBalance == -1 ){
+        std::ostringstream stringStream;
+        //Example: Error <ATM ID>: Your transaction failed – password for account id <id> is incorrect
+        stringStream << LOG_LOW_BALANCE(atmId,mId,drawAmount) << endl;
+        string errMsg = stringStream.str();
+        logSafe(errMsg);
+    }else {
+        std::ostringstream stringStream;
+        // log for success withdrawal
+        //Example:<ATM ID>: Account <id> new balance is <bal> after <amount> $ was withdrew
+        stringStream << LOG_WITHDRAW(atmId, mId, newBalance, drawAmount) << endl;
+        string msg = stringStream.str();
+        logSafe(msg);
+    }
     leaveWrite();
     return newBalance;
 }
 
-int Account::deposit(int depositAmount) {
-    //TODO can be a case when deposit A but before log A make another deposit B then log B and then log A, is it OK ?
+int Account::deposit(int depositAmount, int atmId) {
     enterWrite();
     //make 1 sec delay
     sleep(1);
     mBalance += depositAmount;
     int newBalance = mBalance;
+    //log deposit
+    std::ostringstream stringStream;
+    //Example: <ATM ID>: Account <id> new balance is <bal> after <amount> $ was deposited 
+    stringStream << LOG_DEPOSIT(atmId,mId,newBalance,depositAmount) << endl;
+    string msg = stringStream.str();
+    logSafe(msg);
     leaveWrite();
     return newBalance;
 }
 
-TransferData Account::transfer(int transferAmount, Account& toAccount) {
+TransferData Account::transfer(int transferAmount, Account &toAccount, int atmId) {
     Account& fromAccount = *this;
     if(fromAccount.mId == toAccount.mId){
         return TransferData(-2,-1,-1); // for same id error
@@ -97,6 +120,7 @@ TransferData Account::transfer(int transferAmount, Account& toAccount) {
     }
     //make 1 sec delay
     sleep(1);
+
     TransferData data(-1,-1,-1);
     //transfer money if there is enough
     if(fromAccount.mBalance >= transferAmount){
@@ -106,6 +130,25 @@ TransferData Account::transfer(int transferAmount, Account& toAccount) {
         toAccount.mBalance += transferAmount;
         data.init(1,fromAccount.mBalance,toAccount.mBalance);
     }
+
+    if(data.status == 1){
+        //log success transfer
+        std::ostringstream stringStream;
+        //Example (is one line): <ATM ID>: Transfer <amount> from account <account> to account <target_account>
+        // new account balance is <account_bal> new target account balance is <target_bal>
+        stringStream << LOG_TRANSFER(atmId,transferAmount,fromAccount.mId,toAccount.mId,data) << endl;
+        string msg = stringStream.str();
+        logSafe(msg);
+    }else{
+        //on transfer failed log it
+        std::ostringstream stringStream;
+        //Example: Error <ATM ID>: Your transaction failed – account id <id> balance is lower than <amount>
+        stringStream << LOG_LOW_BALANCE(atmId,fromAccount.mId,transferAmount) << endl;
+        string errMsg = stringStream.str();
+        logSafe(errMsg);
+
+    }
+
     //TODO make sure the order is non relevant on unlock
     if(fromAccount.mId < toAccount.mId){
         toAccount.leaveWrite();
@@ -146,6 +189,7 @@ string getAccountsStatus(Account& bankAccount) {
 }
 
 string Account::getStatus() {
+    //be sure you call this after locking the account
 //   Example: "Account 123: Balance – 12  $ , Account Password – 1234\n"
     //TODO handle fixed width for balance , check what the correct width
     std::ostringstream stringStream;
@@ -173,31 +217,4 @@ int Account::chargeTax(Account &bankAccount, double taxPrecents) {
     return taxAmount;
 }
 
-
-/*
-//another option as a friend func.
-int transferMoney(int transferAmount, Account& fromAccount, Account& toAccount) {
-    //lock order by id to prevent dead-lock
-    if(fromAccount.mId > toAccount.mId) {
-        fromAccount.enterWrite();
-        toAccount.enterWrite();
-    }else{
-        toAccount.enterWrite();
-        fromAccount.enterWrite();
-    }
-    int success = -1;
-    //transfer money if there is enough
-    if(fromAccount.mBalance >= transferAmount){
-        //take from one account
-        fromAccount.mBalance -= transferAmount;
-        //put in the other one
-        toAccount.mBalance += transferAmount;
-        success = 1;
-    }
-    //TODO make sure the order is non relevant on unlock
-    fromAccount.leaveWrite();
-    toAccount.leaveWrite();
-    return success;
-}
-*/
 
