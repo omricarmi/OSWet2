@@ -52,15 +52,7 @@ void chargeTaxWrapper() {
     //iterate over all accounts and charge non VIP ones
     for (auto& item : accounts) {
         Account &account = item.second;
-        int amountCharged = account.chargeTax(bankAccount,percents);
-        //in case vip account
-        if(amountCharged != -1){
-            std::ostringstream stringStream;
-            //Example: Bank: commissions of <#> % were charged, the bank gained <#> $ from account <acc id>
-            stringStream << LOG_TAX(percents,amountCharged,account.getId()) << endl;
-            string msg = stringStream.str();
-            logSafe(msg);
-        }
+        account.chargeTax(bankAccount,percents);
     }
 }
 

@@ -99,13 +99,8 @@ void* statusThreadWrapper(void* data){
     const int halfSecond = 500000;//5e5 micro sec
     while(!isATMsFinished) {
         usleep(halfSecond);
-        //clear screen
-        printSafe("\033[2J");
-        //move cursor to left up corner
-        printSafe("\033[1;1H");
         //print the status of accounts and the bank
         string status = getAccountsStatus(getBankAccount());
-        printSafe(status);
     }
     return NULL;
 }

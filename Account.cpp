@@ -177,6 +177,13 @@ string getAccountsStatus(Account& bankAccount) {
     //Example: "The Bank has 1500 $\n"
     status += string("The Bank has ") + to_string(bankAccount.mBalance) + string(" $\n");
 
+    //clear screen
+    printSafe("\033[2J");
+    //move cursor to left up corner
+    printSafe("\033[1;1H");
+    //print status
+    printSafe(status);
+
     //unlock all accounts include bank account
     //TODO check about unlock reverse order
     bankAccount.leaveRead();
@@ -211,6 +218,14 @@ int Account::chargeTax(Account &bankAccount, double taxPrecents) {
     int taxAmount = (int) round( (taxPrecents/100.0) * ((double)account.mBalance) );
     account.mBalance -= taxAmount;
     bankAccount.mBalance += taxAmount;
+
+    //in case not vip account
+    std::ostringstream stringStream;
+    //Example: Bank: commissions of <#> % were charged, the bank gained <#> $ from account <acc id>
+    stringStream << LOG_TAX(taxPrecents,taxAmount,account.getId()) << endl;
+    string msg = stringStream.str();
+    logSafe(msg);
+
     //TODO make sure the order is non relevant on unlock
     bankAccount.leaveWrite();
     account.leaveWrite();
