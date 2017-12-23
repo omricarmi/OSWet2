@@ -209,6 +209,7 @@ void makeVip(vector<string> words, int atmId) {
 void openAccount(vector<string> words, int atmId) {
 
     int accountId = stoi(words[1]);
+    //TODO problem when password start with 0 like 0144 then we save 144, so what happen when 0000 we save 0 ?
     int password = stoi(words[2]);
     int initialAmount = stoi(words[3]);
     // in case there is already an account with the same id ,log error
@@ -225,7 +226,9 @@ void openAccount(vector<string> words, int atmId) {
     Account *newAccount = new Account(accountId, password,initialAmount);
     // print creation success
     std::ostringstream stringStream;
-    stringStream <<  LOG_ACCOUNT_CREATED(atmId,accountId,password,initialAmount) <<endl;
+    char strPassword[5];
+    sprintf(strPassword,"%04d",password);
+    stringStream <<  LOG_ACCOUNT_CREATED(atmId,accountId,strPassword,initialAmount) <<endl;
     string msg = stringStream.str();
     logSafe(msg);
     //add the account to the global map
