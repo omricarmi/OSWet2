@@ -21,4 +21,10 @@ void* bankThreadWrapper(void* bankThreadData);
 
 Account& getBankAccount();
 
+void startBank();
+void finishBank();
+
+void lockAddAccount();
+void unlockAddAccount();
+
 #endif //OSWET2_BANK_H

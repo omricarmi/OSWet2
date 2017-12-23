@@ -15,6 +15,7 @@ std::map<AccountId ,Account&> accounts;
 //accountId of bank is irrelevant
 Account bankAccount(0,0,0);
 
+pthread_mutex_t addAccountMutex;
 
 void chargeTaxWrapper();
 
@@ -54,5 +55,30 @@ void chargeTaxWrapper() {
         Account &account = item.second;
         account.chargeTax(bankAccount,percents);
     }
+}
+
+
+void startBank() {
+    if (pthread_mutex_init(&addAccountMutex,NULL)) {
+        cerr << "pthread_mutex_init failed: Add Account Mutex." << endl;
+        //TODO verify that exit() allowed
+        exit(-1);
+    }
+}
+
+void finishBank() {
+    if (pthread_mutex_destroy(&addAccountMutex) != 0) {
+        cerr << "pthread_mutex_destroy failed: Add Account Mutex." << endl;
+        //TODO verify that exit() allowed
+        exit(-1);
+    }
+}
+
+void lockAddAccount() {
+    pthread_mutex_lock(&addAccountMutex);
+}
+
+void unlockAddAccount() {
+    pthread_mutex_unlock(&addAccountMutex);
 }
 

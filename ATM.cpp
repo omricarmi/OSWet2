@@ -208,6 +208,9 @@ void makeVip(vector<string> words, int atmId) {
 
 void openAccount(vector<string> words, int atmId) {
 
+    //prevent adding 2 accounts simultaneously
+    lockAddAccount();
+
     int accountId = stoi(words[1]);
     int password = stoi(words[2]);
     int initialAmount = stoi(words[3]);
@@ -231,4 +234,6 @@ void openAccount(vector<string> words, int atmId) {
     //add the account to the global map
     accounts.insert(pair<AccountId,Account&>(accountId,*newAccount));
 
+    //end of adding account so can release the lock
+    unlockAddAccount();
 }
