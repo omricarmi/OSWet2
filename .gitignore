@@ -4,3 +4,4 @@ cmake-build-debug/
 *.o
 Bank
 log.txt
+.idea/
