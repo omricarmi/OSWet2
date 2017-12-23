@@ -162,6 +162,7 @@ TransferData Account::transfer(int transferAmount, Account &toAccount, int atmId
 
 string getAccountsStatus(Account& bankAccount) {
     //lock all accounts include bank account
+    lockAddAccount();
     bankAccount.enterRead();
     for (auto& item : accounts){
         Account& account = item.second;
@@ -186,6 +187,7 @@ string getAccountsStatus(Account& bankAccount) {
 
     //unlock all accounts include bank account
     //TODO check about unlock reverse order
+    unlockAddAccount();
     bankAccount.leaveRead();
     for (auto& item : accounts){
         Account& account = item.second;

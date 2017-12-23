@@ -36,6 +36,9 @@ int main(int argc, char* argv[]){
     //must init to able to use thread safe print
     startPrintSafe();
 
+    //must call before using bank
+    startBank();
+
     /***** Not Thread Safe - START *****/
 
     //init threads for ATMs
@@ -87,6 +90,9 @@ int main(int argc, char* argv[]){
 //    }
 //    printSafe(getAccountsStatus(getBankAccount()));
 ////DEBUG - END
+
+    //finish bank
+    finishBank();
 
     //finish safe thread print
     finishPrintSafe();
