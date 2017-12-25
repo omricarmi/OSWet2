@@ -7,7 +7,7 @@
 #include "Account.h"
 #include "Bank.h"
 
-int Account::getId() const {
+string Account::getId() const {
     return mId;
 }
 
@@ -107,11 +107,12 @@ int Account::deposit(int depositAmount, int atmId) {
 
 TransferData Account::transfer(int transferAmount, Account &toAccount, int atmId) {
     Account& fromAccount = *this;
-    if(fromAccount.mId == toAccount.mId){
+    ////TODO will 0001 vs 1 vs 01 will be the same accout BUG maybe, or from the first place there wont be 001 or 0001 etc..
+    if(stoi(fromAccount.mId) == stoi(toAccount.mId)){
         return TransferData(-2,-1,-1); // for same id error
     }
     //lock order by id to prevent dead-lock
-    if(fromAccount.mId < toAccount.mId) {
+    if(stoi(fromAccount.mId) < stoi(toAccount.mId)) {
         fromAccount.enterWrite();
         toAccount.enterWrite();
     }else{
@@ -150,7 +151,7 @@ TransferData Account::transfer(int transferAmount, Account &toAccount, int atmId
     }
 
     //TODO make sure the order is non relevant on unlock
-    if(fromAccount.mId < toAccount.mId){
+    if(stoi(fromAccount.mId) < stoi(toAccount.mId)){
         toAccount.leaveWrite();
         fromAccount.leaveWrite();
     } else{
@@ -202,8 +203,10 @@ string Account::getStatus() {
 //   Example: "Account 123: Balance – 12  $ , Account Password – 1234\n"
     //TODO handle fixed width for balance , check what the correct width
     std::ostringstream stringStream;
+    char strPassword[5];
+    sprintf(strPassword,"%04d",mPassword);
     //TODO make ID like 0001 and not 1 , maybe needed also somewhere else
-    stringStream << "Account " << mId << ": Balance – " << mBalance << "  $ , Account Password – " << mPassword << endl;
+    stringStream << "Account " << mId << ": Balance – " << mBalance << "  $ , Account Password – " << strPassword << endl;
     string status = stringStream.str();
     return status;
 }

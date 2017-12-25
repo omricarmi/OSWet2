@@ -211,12 +211,12 @@ void openAccount(vector<string> words, int atmId) {
     //prevent adding 2 accounts simultaneously
     lockAddAccount();
 
-    int accountId = stoi(words[1]);
+    string accountId = (words[1]);
     //TODO problem when password start with 0 like 0144 then we save 144, so what happen when 0000 we save 0 ?
     int password = stoi(words[2]);
     int initialAmount = stoi(words[3]);
     // in case there is already an account with the same id ,log error
-    if(accounts.find(accountId) != accounts.end() ){
+    if(accounts.find(stoi(accountId)) != accounts.end() ){
         unlockAddAccount();
         std::ostringstream stringStream;
         stringStream << LOG_ACCOUNT_ALREADY_EXISTS(atmId) << endl;
@@ -237,7 +237,7 @@ void openAccount(vector<string> words, int atmId) {
     string msg = stringStream.str();
     logSafe(msg);
     //add the account to the global map
-    accounts.insert(pair<AccountId,Account&>(accountId,*newAccount));
+    accounts.insert(pair<AccountId,Account&>(stoi(accountId),*newAccount));
 
     //end of adding account so can release the lock
     unlockAddAccount();

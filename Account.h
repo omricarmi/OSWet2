@@ -35,7 +35,7 @@ class Account {
 private:
 
     //data
-    const AccountId mId;
+    const string mId;
     const int mPassword; //TODO verify 4 digits exactly
     int mBalance;
     bool mIsVIP;
@@ -52,7 +52,7 @@ private:
 
 public:
 
-    Account(int id, int password, int initialAmount) : mId(id), mPassword(password), mBalance(initialAmount), mIsVIP(false) {
+    Account(string id, int password, int initialAmount) : mId(id), mPassword(password), mBalance(initialAmount), mIsVIP(false) {
 
         readCount = 0;
         //TODO verify if init mutex make it unlock by default
@@ -86,7 +86,7 @@ public:
         }
     }
 
-    int getId() const;
+    string getId() const;
     bool verifyPassword(int password) const;
     void getBalance(int atmId);
     bool isVIP();
