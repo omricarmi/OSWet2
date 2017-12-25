@@ -217,12 +217,14 @@ void openAccount(vector<string> words, int atmId) {
     int initialAmount = stoi(words[3]);
     // in case there is already an account with the same id ,log error
     if(accounts.find(accountId) != accounts.end() ){
+        unlockAddAccount();
         std::ostringstream stringStream;
         stringStream << LOG_ACCOUNT_ALREADY_EXISTS(atmId) << endl;
         string errMsg = stringStream.str();
         logSafe(errMsg);
         return;
     }
+
     //make 1 sec delay
     sleep(1);
     //init the account

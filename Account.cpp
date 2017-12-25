@@ -202,6 +202,7 @@ string Account::getStatus() {
 //   Example: "Account 123: Balance – 12  $ , Account Password – 1234\n"
     //TODO handle fixed width for balance , check what the correct width
     std::ostringstream stringStream;
+    //TODO make ID like 0001 and not 1 , maybe needed also somewhere else
     stringStream << "Account " << mId << ": Balance – " << mBalance << "  $ , Account Password – " << mPassword << endl;
     string status = stringStream.str();
     return status;

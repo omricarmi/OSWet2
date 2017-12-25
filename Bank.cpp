@@ -26,6 +26,8 @@ void freeAccounts() {
 }
 
 void *bankThreadWrapper(void *bankThreadData) {
+    //must call before using bank
+    startBank();
     // run until both atms and status are finished
     while(!isATMsFinished || !isStatusFinished){
         //3 sec sleep
@@ -33,8 +35,14 @@ void *bankThreadWrapper(void *bankThreadData) {
         //charge taxes from all non VIP accounts
         chargeTaxWrapper();
     }
+    //TODO maybe need to add here status print because the last print maybe not include the real final balance of the bank
+    // print final state of the bank before finish the execution
+    getAccountsStatus(getBankAccount());
     //free global accounts
     freeAccounts();
+    //finish bank
+    finishBank();
+
     return NULL;
 }
 
