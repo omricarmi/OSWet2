@@ -64,11 +64,12 @@ void startBank() {
         exit(-1);
     }
     //init accountId of bank is irrelevant
-    pBankAccount = new Account(0,0,0);
+    pBankAccount = new Account("0",0,0);
 }
 
 void finishBank() {
     if (pthread_mutex_destroy(&addAccountMutex) != 0) {
+        //TODO FAILED on tests sometimes don't know why :-(
         cerr << "pthread_mutex_destroy failed: Add Account Mutex." << endl;
         exit(-1);
     }
