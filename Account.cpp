@@ -149,7 +149,6 @@ TransferData Account::transfer(int transferAmount, Account &toAccount, int atmId
 
     }
 
-    //TODO make sure the order is non relevant on unlock
     if(fromAccount.mId < toAccount.mId){
         toAccount.leaveWrite();
         fromAccount.leaveWrite();
@@ -186,7 +185,6 @@ string getAccountsStatus(Account& bankAccount) {
     printSafe(status);
 
     //unlock all accounts include bank account
-    //TODO check about unlock reverse order
     unlockAddAccount();
     bankAccount.leaveRead();
     for (auto& item : accounts){
@@ -200,10 +198,10 @@ string getAccountsStatus(Account& bankAccount) {
 string Account::getStatus() {
     //be sure you call this after locking the account
 //   Example: "Account 123: Balance – 12  $ , Account Password – 1234\n"
-    //TODO handle fixed width for balance , check what the correct width
     std::ostringstream stringStream;
-    //TODO make ID like 0001 and not 1 , maybe needed also somewhere else
-    stringStream << "Account " << mId << ": Balance – " << mBalance << "  $ , Account Password – " << mPassword << endl;
+    char strPassword[5];
+    sprintf(strPassword,"%04d",mPassword);
+    stringStream << "Account " << mId << ": Balance – " << mBalance << "  $ , Account Password – " << strPassword << endl;
     string status = stringStream.str();
     return status;
 }
@@ -229,7 +227,6 @@ int Account::chargeTax(Account &bankAccount, double taxPrecents) {
     string msg = stringStream.str();
     logSafe(msg);
 
-    //TODO make sure the order is non relevant on unlock
     bankAccount.leaveWrite();
     account.leaveWrite();
     return taxAmount;

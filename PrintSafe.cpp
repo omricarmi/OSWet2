@@ -9,17 +9,14 @@ pthread_mutex_t printMutex;
 pthread_mutex_t logMutex;
 ofstream logfile;
 void startPrintSafe() {
-    //TODO verify if init mutex make it unlock by default
     int initLogMutexCheck =  pthread_mutex_init(&logMutex,NULL);
     int initPrintMutexCheck = pthread_mutex_init(&printMutex,NULL);
     if (initPrintMutexCheck) {
         cerr << "pthread_mutex_init failed: Print Mutex." << endl;
-        //TODO verify that exit() allowed
         exit(-1);
     }
     if (initLogMutexCheck) {
         cerr << "pthread_mutex_init failed: Log Mutex." << endl;
-        //TODO verify that exit() allowed
         exit(-1);
     }
 
@@ -28,7 +25,6 @@ void startPrintSafe() {
     if (!logfile.is_open())
     {
         cerr << "Failed to open log.txt file for write." << endl;
-        //TODO verify that exit() allowed
         exit(-1);
     }
 }
@@ -46,7 +42,6 @@ void logSafe(const string& msg) {
         pthread_mutex_unlock(&logMutex);
     }else{
         cerr << "Failed to write to log.txt file." << endl;
-        //TODO verify that exit() allowed
         exit(-1);
     }
 }
@@ -54,18 +49,14 @@ void logSafe(const string& msg) {
 
 
 void finishPrintSafe() {
-    //TODO verify if free mutex correctly
     int destroyPrintMutexCheck = pthread_mutex_destroy(&printMutex);
     int destroyLogMutexCheck = pthread_mutex_destroy(&logMutex);
-    //TODO this is how we check valid free mutex
     if (destroyPrintMutexCheck != 0) {
         cerr << "pthread_mutex_destroy failed: Print Mutex." << endl;
-        //TODO verify that exit() allowed
         exit(-1);
     }
     if (destroyLogMutexCheck != 0) {
         cerr << "pthread_mutex_destroy failed: Log Mutex." << endl;
-        //TODO verify that exit() allowed
         exit(-1);
     }
     //close log.txt file

@@ -20,7 +20,6 @@ void freeAccounts() {
     //iterate over all accounts and free their allocation
     for (auto& item : accounts) {
         Account &account = item.second;
-        //TODO does delete ref delete the origin?
         delete &account;
     }
 }
@@ -35,7 +34,6 @@ void *bankThreadWrapper(void *bankThreadData) {
         //charge taxes from all non VIP accounts
         chargeTaxWrapper();
     }
-    //TODO maybe need to add here status print because the last print maybe not include the real final balance of the bank
     // print final state of the bank before finish the execution
     getAccountsStatus(getBankAccount());
     //free global accounts
@@ -63,7 +61,6 @@ void chargeTaxWrapper() {
 void startBank() {
     if (pthread_mutex_init(&addAccountMutex,NULL)) {
         cerr << "pthread_mutex_init failed: Add Account Mutex." << endl;
-        //TODO verify that exit() allowed
         exit(-1);
     }
     //init accountId of bank is irrelevant
@@ -73,7 +70,6 @@ void startBank() {
 void finishBank() {
     if (pthread_mutex_destroy(&addAccountMutex) != 0) {
         cerr << "pthread_mutex_destroy failed: Add Account Mutex." << endl;
-        //TODO verify that exit() allowed
         exit(-1);
     }
     //free bank obj

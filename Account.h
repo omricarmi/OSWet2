@@ -36,7 +36,7 @@ private:
 
     //data
     const AccountId mId;
-    const int mPassword; //TODO verify 4 digits exactly
+    const int mPassword;
     int mBalance;
     bool mIsVIP;
 
@@ -55,7 +55,6 @@ public:
     Account(int id, int password, int initialAmount) : mId(id), mPassword(password), mBalance(initialAmount), mIsVIP(false) {
 
         readCount = 0;
-        //TODO verify if init mutex make it unlock by default
         int initReadMutexCheck = pthread_mutex_init(&readMutex,NULL);
         int initWriteMutexCheck = pthread_mutex_init(&writeMutex,NULL);
         if (initReadMutexCheck || initWriteMutexCheck)
@@ -63,25 +62,17 @@ public:
         {
             string FailedMutex = (initReadMutexCheck != 0) ? "Reader Mutex" : "Writer Mutex";
             cerr << "pthread_mutex_init failed:" << FailedMutex << endl;
-            //TODO verify that exit() allowed
             exit(-1);
         }
     }
 
     ~Account(){
-        //TODO verify how to destroy mutex correctly
-//        enterRead();
-//        leaveRead();
-//        enterWrite();
-//        leaveWrite();
         if (pthread_mutex_destroy(&readMutex) != 0) {
             cerr << "pthread_mutex_destroy failed: read Mutex." << endl;
-            //TODO verify that exit() allowed
             exit(-1);
         }
         if (pthread_mutex_destroy(&writeMutex) != 0) {
             cerr << "pthread_mutex_destroy failed: write Mutex." << endl;
-            //TODO verify that exit() allowed
             exit(-1);
         }
     }

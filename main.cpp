@@ -17,21 +17,24 @@ using namespace std;
 /***** Function Declaration *****/
 void* statusThreadWrapper(void* data);
 
-//TODO make makefile with -lpthread and c++11 flags, check what else needed
-
 /***** Main Entry *****/
 int main(int argc, char* argv[]){
 
     //validate program minimum param
     if(argc<2){
         cout << ERR_FAILED_RUN_ATTEMPT << endl;
-        //TODO verify correct status exit number
-        return 1;
+        return -1;
     }
 
     //parse params
     int N = atoi(argv[1]); //amount of ATMs
     char** inputFiles = &argv[2]; //input file names for ATMs
+
+    //validate amounts of ATMs correspond to the number of ATMs text files
+    if(argc-2 != N){
+        cout << ERR_FAILED_RUN_ATTEMPT << endl;
+        return -1;
+    }
 
     //must init to able to use thread safe print
     startPrintSafe();

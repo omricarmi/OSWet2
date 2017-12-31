@@ -53,7 +53,7 @@ void* atmThreadWrapper(void *pAtmThreadData) {
     }
     else{
         cerr << "failed to open file: " << inputFileName << endl;
-        exit(-1);////TODO does -1 is correct?
+        exit(-1);
     }
     return NULL;
 }
@@ -212,7 +212,6 @@ void openAccount(vector<string> words, int atmId) {
     lockAddAccount();
 
     int accountId = stoi(words[1]);
-    //TODO problem when password start with 0 like 0144 then we save 144, so what happen when 0000 we save 0 ?
     int password = stoi(words[2]);
     int initialAmount = stoi(words[3]);
     // in case there is already an account with the same id ,log error
