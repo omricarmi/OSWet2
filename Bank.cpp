@@ -64,7 +64,7 @@ void startBank() {
         exit(-1);
     }
     //init accountId of bank is irrelevant
-    pBankAccount = new Account("0",0,0);
+    pBankAccount = new Account(0,0,0);
 }
 
 void finishBank() {
