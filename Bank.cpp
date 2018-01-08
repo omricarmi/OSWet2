@@ -17,11 +17,14 @@ pthread_mutex_t addAccountMutex;
 void chargeTaxWrapper();
 
 void freeAccounts() {
-    //iterate over all accounts and free their allocation
-    for (auto& item : accounts) {
-        Account &account = item.second;
-        delete &account;
-    }
+    //TODO find how to free accounts MAP
+    accounts.clear();
+//    //iterate over all accounts and free their allocation
+//    for (auto& item : accounts) {
+//        delete &(item.second);
+////        Account &account = item.second;
+////        delete &account;
+//    }
 }
 
 void *bankThreadWrapper(void *bankThreadData) {
@@ -68,11 +71,18 @@ void startBank() {
 }
 
 void finishBank() {
-    if (pthread_mutex_destroy(&addAccountMutex) != 0) {
-        //TODO FAILED on tests sometimes don't know why :-(
-        cerr << "pthread_mutex_destroy failed: Add Account Mutex." << endl;
-        exit(-1);
-    }
+   if (pthread_mutex_trylock(&addAccountMutex) != 0){
+       cerr << "pthread_mutex_destroy failed: Add Account Mutex." << endl;
+       exit(-1);
+   }else{
+       pthread_mutex_unlock(&addAccountMutex);
+   }
+    int errid = pthread_mutex_destroy(&addAccountMutex);
+//    if ( errid != 0) {
+//        //TODO FAILED on tests sometimes don't know why :-(
+//        cerr << "pthread_mutex_destroy failed: Add Account Mutex." << endl;
+//        exit(-1);
+//    }
     //free bank obj
     delete pBankAccount;
 }

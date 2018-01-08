@@ -109,6 +109,7 @@ void getBalance(vector<string> words, int atmId) {
         stringStream << LOG_ACCOUNT_NOT_EXISTS(atmId, accountId) << endl;
         string errMsg = stringStream.str();
         logSafe(errMsg);
+        return;
     }
     //check if password correct
     if(!(*it).second.verifyPassword(password)){
@@ -137,6 +138,7 @@ void withdraw(vector<string> words, int atmId) {
         stringStream << LOG_ACCOUNT_NOT_EXISTS(atmId, accountId) << endl;
         string errMsg = stringStream.str();
         logSafe(errMsg);
+        return;
     }
     // for incorrect password ,log error
     if(!(*it).second.verifyPassword(password)){
@@ -166,6 +168,7 @@ void deposit(vector<string> words, int atmId) {
         stringStream << LOG_ACCOUNT_NOT_EXISTS(atmId, accountId) << endl;
         string errMsg = stringStream.str();
         logSafe(errMsg);
+        return;
     }
     // for incorrect password ,log error
     if(!(*it).second.verifyPassword(password)){
@@ -192,6 +195,7 @@ void makeVip(vector<string> words, int atmId) {
         stringStream << LOG_ACCOUNT_NOT_EXISTS(atmId, accountId) << endl;
         string errMsg = stringStream.str();
         logSafe(errMsg);
+        return;
     }
     //for incorrect password
     if(!(*it).second.verifyPassword(password)){
